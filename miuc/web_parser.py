@@ -8,7 +8,7 @@
 """
 
 import requests
-from .pages_processor import GithubProcessor, StackoverflowProcessor
+from .pages_processor import GithubProcessor, StackoverflowProcessor, ZhihuProcessor
 
 # some frequently pages
 
@@ -16,20 +16,35 @@ SPECIFIC_PAGES = {
     # url: page_processor
     "https://github.com/": GithubProcessor,
     "https://stackoverflow.com/": StackoverflowProcessor,
+    "https://zhuanlan.zhihu.com/": ZhihuProcessor,
+    "https://www.zhihu.com/": ZhihuProcessor
 }
+
+
+FORMATTING_TITLE = '<title>'
+
+# formatting title will be passed to processors, 
+# each processor should complete format(self) to translate it into md format
+# 
+# other formatting title like
+# FORMATTING_TITLE = '<site> <title>'
+# FORMATTING_TITLE = '<site> - <title>'
+
 
 
 def parse_url(url: str) -> str:
     """
     parse url and return the title for the page
     """
+
+    for specific_page_url in SPECIFIC_PAGES:
+        if url.startswith(specific_page_url):
+            return SPECIFIC_PAGES[specific_page_url](FORMATTING_TITLE)(url)
+
     response = requests.get(url)
     if response.status_code != 200:
         return f"connect {url} failed: status code [{response.status_code}]"
 
-    for specific_page_url in SPECIFIC_PAGES:
-        if url.startswith(specific_page_url):
-            return SPECIFIC_PAGES[specific_page_url](url)
     return parse_html(response.text)
 
 
