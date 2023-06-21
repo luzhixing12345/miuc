@@ -5,3 +5,7 @@ node_modules
 *.vsix
 
 */__pycache__
+.coverage
+__pycache__
+htmlcov/
+a.html

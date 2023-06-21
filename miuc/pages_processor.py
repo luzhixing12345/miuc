@@ -128,6 +128,7 @@ class ZhihuProcessor(Processor):
         self.title = None
 
         self.urls_re = [
+            re.compile(r'^https://www.zhihu.com/$'),
             re.compile(r"^https://www.zhihu.com/question/\d+/(?P<type>.*?)/(?P<id>.*?)/?$"),
             re.compile(r"^https://www.zhihu.com/(?P<type>.*?)/(?P<id>.*?)/(?P<sub_type>.*?)/?$"),
             re.compile(r"^https://www.zhihu.com/(?P<type>.*?)/(?P<id>.*?)/?$"),
@@ -158,6 +159,9 @@ class ZhihuProcessor(Processor):
         for url_re in self.urls_re:
             res = url_re.match(self.url)
             if res:
+                if 'type' not in res.groupdict():
+                    self.title = '知乎'
+                    return
                 self.type_name = res.group("type")
                 if self.type_name == "question":
                     # https://www.zhihu.com/question/446988424
@@ -169,20 +173,30 @@ class ZhihuProcessor(Processor):
                     self.title = pattern.search(html).group(1)
                 elif self.type_name == "answer":
                     # https://www.zhihu.com/question/21099081/answer/119347251
+                    # https://www.zhihu.com/question/367357782/answer/3066947505 Anonymous user
+
                     pattern = re.compile(
-                        r'<a .*target="_blank" class="UserLink-link" data-za-detail-view-element_name="User">(.*?)</a>'
+                        r'<h1 class="QuestionHeader-title">(.*?)</h1>'
                     )
                     self.title = pattern.search(html).group(1) + "的回答"
                 elif self.type_name == "people":
                     # https://www.zhihu.com/people/hinus
-                    pattern = re.compile(r'<span class="ProfileHeader-name">(.*?)</span>')
-                    self.title = pattern.search(html).group(1) + "的主页"
+
+                    # why style not span ???
+                    pattern = re.compile(r'<span class="ProfileHeader-name">(.*?)</span')
+                    user_name = re.sub(r'<style.*>','',pattern.search(html).group(1))
+                    self.title = user_name + "的主页"
                     if "sub_type" in res.groupdict():
                         # https://www.zhihu.com/people/hinus/collections
                         self.title = f'{res.group("id")}的{self.sub_types[res.group("sub_type")]}'
                 elif self.type_name == 'collection':
+                    # https://www.zhihu.com/collection/86788003
                     pattern = re.compile(r'<div class="CollectionDetailPageHeader-title">(.*?)</div>')
                     self.title = pattern.search(html).group(1) + " 收藏夹"
+                elif self.type_name == 'column':
+                    # https://www.zhihu.com/column/hinus
+                    pattern = re.compile(r'<div class="css-zyehvu">(.*?)</div>')
+                    self.title = pattern.search(html).group(1) + " 专栏"
                 else:
                     self.error()
                 return
