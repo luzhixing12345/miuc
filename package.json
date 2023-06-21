@@ -28,28 +28,44 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "keybindings": [{
-            "command": "miuc.myKeyBinding",
-            "key": "ctrl+v",
-            "mac": "cmd+v",
-            "when": "editorLangId == markdown && editorTextFocus"
-        }],
+        "commands": [
+            {
+                "command": "extensionCommand",
+                "title": "Extension Command"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "miuc.myKeyBinding",
+                "key": "ctrl+v",
+                "mac": "cmd+v",
+                "when": "editorLangId == markdown && editorTextFocus"
+            }
+        ],
         "languages": [
             {
-              "id": "markdown",
-              "extensions": [
-                ".md",
-                ".markdown",
-                ".mdown",
-                ".mkdn",
-                ".mkd",
-                ".mdwn",
-                ".mdtxt",
-                ".mdtext",
-                ".Rmd"
-              ]
+                "id": "markdown",
+                "extensions": [
+                    ".md",
+                    ".markdown",
+                    ".mdown",
+                    ".mkdn",
+                    ".mkd",
+                    ".mdwn",
+                    ".mdtxt",
+                    ".mdtext",
+                    ".Rmd"
+                ]
             }
-          ]
+        ]
+    },
+    "extensionDependencies": [
+        "ms-python.python"
+    ],
+    "python": {
+        "extensionDependencies": [
+            "miuc"
+        ]
     },
     "scripts": {
         "vscode:prepublish": "pnpm run compile",
