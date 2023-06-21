@@ -6,18 +6,19 @@
 *@email: luzhixing12345@163.com
 *@Github: luzhixing12345
 """
-
+import re
 import requests
-from .pages_processor import GithubProcessor, StackoverflowProcessor, ZhihuProcessor
+from .pages_processor import GithubProcessor, StackoverflowProcessor, ZhihuProcessor, BilibiliProcessor
 
 # some frequently pages
 
 SPECIFIC_PAGES = {
     # url: page_processor
-    "https://github.com/": GithubProcessor,
-    "https://stackoverflow.com/": StackoverflowProcessor,
-    "https://zhuanlan.zhihu.com/": ZhihuProcessor,
-    "https://www.zhihu.com/": ZhihuProcessor
+    r"^https://github\.com/?.*": GithubProcessor,
+    r"^https://stackoverflow\.com/?.*": StackoverflowProcessor,
+    r"^https://zhuanlan\.zhihu\.com/?.*": ZhihuProcessor,
+    r"^https://www\.zhihu\.com/?.*": ZhihuProcessor,
+    r"^https://www\.bilibili\.com/?.*": BilibiliProcessor
 }
 
 
@@ -38,7 +39,7 @@ def parse_url(url: str) -> str:
     """
 
     for specific_page_url in SPECIFIC_PAGES:
-        if url.startswith(specific_page_url):
+        if re.match(specific_page_url, url):
             return SPECIFIC_PAGES[specific_page_url](FORMATTING_TITLE)(url)
 
     response = requests.get(url)

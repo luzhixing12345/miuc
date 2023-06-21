@@ -12,7 +12,7 @@ If you prefer to use in command line, you could download miuc from PYPI
 
 ```bash
 pip install miuc
-```
+``` 
 
 ## Usage
 
