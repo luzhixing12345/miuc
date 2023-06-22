@@ -8,43 +8,39 @@
 """
 import re
 import requests
-from .pages_processor import GithubProcessor, StackoverflowProcessor, ZhihuProcessor, BilibiliProcessor
+from .site_processor import GithubProcessor, StackoverflowProcessor, ZhihuProcessor, BilibiliProcessor, GithubioProcessor, YoutubeProcessor
+from .site_processor import guess_name_by_url
 
 # some frequently pages
 
-SPECIFIC_PAGES = {
+SPECIFIC_SITES = {
     # url: page_processor
     r"^https://github\.com/?.*": GithubProcessor,
+    r"^https://.*?\.github\.io/?.*?/?.*": GithubioProcessor,
     r"^https://stackoverflow\.com/?.*": StackoverflowProcessor,
+    r"^https://www\.youtube\.com/?.*$": YoutubeProcessor,
+    r"^https://youtu\.be/.*/?": YoutubeProcessor,
     r"^https://zhuanlan\.zhihu\.com/?.*": ZhihuProcessor,
     r"^https://www\.zhihu\.com/?.*": ZhihuProcessor,
     r"^https://www\.bilibili\.com/?.*": BilibiliProcessor
 }
 
 
-FORMATTING_TITLE = '<title>'
-
-# formatting title will be passed to processors, 
-# each processor should complete format(self) to translate it into md format
-# 
-# other formatting title like
-# FORMATTING_TITLE = '<site> <title>'
-# FORMATTING_TITLE = '<site> - <title>'
-
-
-
-def parse_url(url: str) -> str:
+def parse_url(url: str, max_time_limit:int = 5, more_detail:bool = False) -> str:
     """
     parse url and return the title for the page
     """
 
-    for specific_page_url in SPECIFIC_PAGES:
+    # first check the url whether in specific sites
+    # if so, 
+    for specific_page_url in SPECIFIC_SITES:
         if re.match(specific_page_url, url):
-            return SPECIFIC_PAGES[specific_page_url](FORMATTING_TITLE)(url)
+            return SPECIFIC_SITES[specific_page_url](max_time_limit, more_detail)(url)
 
-    response = requests.get(url)
+    response = requests.get(url, timeout=max_time_limit)
     if response.status_code != 200:
-        return f"connect {url} failed: status code [{response.status_code}]"
+        # 404 or other unusual error
+        return guess_name_by_url(url)
 
     return parse_html(response.text)
 

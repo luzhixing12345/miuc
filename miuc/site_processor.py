@@ -9,6 +9,18 @@
 
 import re
 import requests
+import urllib
+import json
+
+
+def guess_name_by_url(url):
+    """
+    when could not access the website or get the html, guess the name by url
+    """
+    url_title = re.sub(r'^https?://', '', url)
+    # remove top domains
+    url_title = '.'.join(url_title.split('.')[:-1])
+    return f'[{url_title}]({url})'
 
 
 class Error(Exception):
@@ -20,19 +32,16 @@ class Error(Exception):
 
 
 class Processor:
-    def __init__(self, formatting_title: str) -> None:
+    def __init__(self, max_time_limit: int = 5, more_detail:bool = False) -> None:
         self.class_name = self.__class__.__name__
-        self.formatting_title = formatting_title
         self.url = None
-        self.max_title_length = 50
+        self.max_time_limit = max_time_limit
+        self.more_detail = more_detail
 
     def __call__(self, url: str):
         self.url: str = url
         self.parse()
         title = self.format()
-        assert (
-            len(title) < self.max_title_length + 10
-        ), f"title too long > {self.max_title_length}, use abbreviation\ntitle = [{title}]"
         return f"[{title}]({self.url})"
 
     def parse(self) -> str:  # pragma: no cover
@@ -61,7 +70,7 @@ class Processor:
         """
         call this function if could not parse only by url
         """
-        response = requests.get(self.url)
+        response = requests.get(self.url, timeout=self.max_time_limit)
         if response.status_code != 200:
             self.error(f"connect {self.url} failed: status code [{response.status_code}]")
         return response.text
@@ -70,8 +79,8 @@ class Processor:
 class GithubProcessor(Processor):
     # https://github.com/microsoft/vscode
 
-    def __init__(self, formatting_title: str) -> None:
-        super().__init__(formatting_title)
+    def __init__(self, max_time_limit: int = 5, more_detail: bool = False) -> None:
+        super().__init__(max_time_limit, more_detail)
 
         self.site = "Github"
         self.user_name = None
@@ -124,21 +133,62 @@ class GithubProcessor(Processor):
             return f"[{self.site}]({self.url})"
 
         if self.repo_name:
-            name = self.repo_name
+            title = self.repo_name
             if self.file_name:
-                name += f" {self.file_name}"
+                title += f" {self.file_name}"
         else:
-            name = self.user_name
+            title = self.user_name
             if self.tab_name:
-                name += f" {self.tab_name}"
+                title += f" {self.tab_name}"
 
-        title = self.formatting_title.replace("<site>", self.site).replace("<title>", name)
+        return title
+
+
+class GithubioProcessor(Processor):
+    """
+    most likely one's blog or github page document site
+    """
+
+    def __init__(self, max_time_limit: int = 5, more_detail: bool = False) -> None:
+        super().__init__(max_time_limit, more_detail)
+        self.user_name = None
+        self.repo_name = None
+        self.routine = None
+
+        self.urls_re = [
+            re.compile(r"^https://(?P<user>.*?)\.github\.io/?$"),  # blog / resume
+            re.compile(r"^https://(?P<user>.*?)\.github.io/(?P<repo>.*?)/(?P<routine>.*?)/?$"),
+            re.compile(r"^https://(?P<user>.*?)\.github.io/(?P<repo>.*?)/?$"),  # github repo
+        ]
+
+    def parse(self) -> str:
+        for url_re in self.urls_re:
+            res = url_re.match(self.url)
+            if res:
+                if "user" in res.groupdict():
+                    self.user_name = res.group("user")
+                if "repo" in res.groupdict():
+                    self.repo_name = res.group("repo")
+                if "routine" in res.groupdict():
+                    origin_routine = res.group("routine").split("/")[-1]
+                    self.routine = urllib.parse.unquote(origin_routine)
+                return
+        self.error("unknown url")
+
+    def format(self):
+        if self.repo_name is None:
+            title = f"{self.user_name}'s blog"
+        else:
+            if self.routine is None:
+                title = f"{self.repo_name} document"
+            else:
+                title = self.routine
         return title
 
 
 class StackoverflowProcessor(Processor):
-    def __init__(self, formatting_title: str) -> None:
-        super().__init__(formatting_title)
+    def __init__(self, max_time_limit: int = 5, more_detail: bool = False) -> None:
+        super().__init__(max_time_limit, more_detail)
         self.site = "stackoverflow"
 
         self.type_name = None
@@ -191,30 +241,25 @@ class StackoverflowProcessor(Processor):
                     pattern = re.compile(r'<a .*class="question-hyperlink">(.*?)</a>')
                     self.question_name = pattern.search(html).group(1)
                     self.is_answer = True
-                elif self.type_name == 'users':
+                elif self.type_name == "users":
                     # https://stackoverflow.com/users/5740428/jan-schultke
                     self.user_name = res.group("question")
                 else:
-                    self.error('unknown type') # pragma: no cover
+                    self.error("unknown type")  # pragma: no cover
                 return
 
     def format(self):
         title = ""
         if self.question_name:
-            if len(self.question_name) >= self.max_title_length:
-                title = f"{self.site}"
-                if self.is_answer:
-                    title += " [answer]"
-                else:
-                    title += " [question]"
+            title = self.question_name
+            if self.is_answer:
+                title += " [answer]"
             else:
-                title = self.question_name
-                if self.is_answer:
-                    title += " [answer]"
+                title += " [question]"
         elif self.tag_name:
             title = f"{self.tag_name} tag"
         elif self.user_name:
-            title = f'{self.user_name}'
+            title = f"{self.user_name}"
         else:
             # pure https://stackoverflow.com/
             title = self.site
@@ -222,9 +267,62 @@ class StackoverflowProcessor(Processor):
         return title
 
 
+class YoutubeProcessor(Processor):
+
+    def __init__(self, max_time_limit: int = 5, more_detail: bool = False) -> None:
+        super().__init__(max_time_limit, more_detail)
+        self.site = "youtube"
+        self.user_name = None
+        self.video_name = None
+        self.urls_re = [
+            re.compile(r'^https://www\.youtube\.com/?$'),
+            re.compile(r'^https://www\.youtube\.com/\@(?P<user>.*?)/?$'),
+            re.compile(r'^https://www\.youtube\.com/\@(?P<user>.*?)/.*$'),
+            re.compile(r'^https://www\.youtube\.com/watch\?v=(?P<id>.*?)/?$'),
+            re.compile(r'^https://youtu\.be/(?P<id>.*?)/?')
+        ]
+
+        # https://www.youtube.com/watch?v=ErV-2tlf9Ls
+
+    def _get_youtube_title(self):
+        # could not directly get youtube video title, instead use the following method
+        # https://stackoverflow.com/a/52664178/17869889
+
+        params = {"format": "json", "url": self.url}
+        url = f"https://www.youtube.com/oembed?{urllib.parse.urlencode(params)}"
+        response = requests.get(url, timeout=self.max_time_limit)
+        data = json.loads(response.text)
+        return data['title']
+
+    def parse(self) -> str:
+        
+        for url_re in self.urls_re:
+            res = url_re.match(self.url)
+            if res:
+                if 'user' in res.groupdict():
+                    self.user_name = res.group('user')
+                if 'id' in res.groupdict():
+                    self.video_name = self._get_youtube_title()
+
+
+    def format(self):
+
+        if self.user_name is None and self.video_name is None:
+            # pure youtube
+            title = self.site
+        else:
+            if self.video_name is not None:
+                title = self.video_name
+            if self.user_name is not None:
+                title = self.user_name
+
+        return title
+
+
+
 class ZhihuProcessor(Processor):
-    def __init__(self, formatting_title: str) -> None:
-        super().__init__(formatting_title)
+    def __init__(self, max_time_limit: int = 5, more_detail: bool = False) -> None:
+        super().__init__(max_time_limit, more_detail)
         self.site = "Zhihu"
         self.type_name = None
         self.title = None
@@ -312,9 +410,8 @@ class ZhihuProcessor(Processor):
 
 
 class BilibiliProcessor(Processor):
-
-    def __init__(self, formatting_title: str) -> None:
-        super().__init__(formatting_title)
+    def __init__(self, max_time_limit: int = 5, more_detail: bool = False) -> None:
+        super().__init__(max_time_limit, more_detail)
         self.site = "bilibli"
         self.type_name = None
         self.user_name = None
@@ -322,9 +419,9 @@ class BilibiliProcessor(Processor):
         self.name = None
 
         self.urls_re = [
-            re.compile(r'^https://www\.bilibili\.com/?$'),
-            re.compile(r'^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*?)\?.*$'),
-            re.compile(r'^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*)$'),
+            re.compile(r"^https://www\.bilibili\.com/?$"),
+            re.compile(r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*?)\?.*$"),
+            re.compile(r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*)$"),
         ]
 
         # https://www.bilibili.com/video/BV1ah4y1X73M
@@ -332,12 +429,10 @@ class BilibiliProcessor(Processor):
         # https://www.bilibili.com/read/cv23285665?spm_id_from=333.999.0.0
 
     def parse(self) -> str:
-        
         for url_re in self.urls_re:
             res = url_re.match(self.url)
 
             if res:
-                
                 if "type" not in res.groupdict():
                     # pure bilibili
                     return
@@ -345,33 +440,32 @@ class BilibiliProcessor(Processor):
                 self.id = res.group("id")
                 # bilibili url often following with "spm_id_from=333.999.0.0 ..."
                 # clean the url
-                self.url = f'https://www.bilibili.com/{self.type_name}/{self.id}'
-                
+                self.url = f"https://www.bilibili.com/{self.type_name}/{self.id}"
+
                 html = self.get_html()
 
-                if self.type_name == 'video':
-                    pattern = re.compile(r'<h1 .*>(.*?)</h1>')
+                if self.type_name == "video":
+                    pattern = re.compile(r"<h1 .*>(.*?)</h1>")
                     self.name = pattern.search(html).group(1)
-                elif self.type_name == 'opus':
+                elif self.type_name == "opus":
                     pass
-                elif self.type_name == 'read':
+                elif self.type_name == "read":
                     pattern = re.compile(r'<title data-vue-meta="true">(.*?)</title>')
-                    self.name = pattern.search(html).group(1).replace(' - 哔哩哔哩','')
+                    self.name = pattern.search(html).group(1).replace(" - 哔哩哔哩", "")
                 return
 
     def format(self):
-
         if self.type_name is None:
             # pure bilibili
             title = self.site
         else:
-            if self.type_name == 'video':
+            if self.type_name == "video":
                 title = self.name
-            elif self.type_name == 'opus':
-                title = f'B站动态'
-            elif self.type_name == 'read':
-                title = f'{self.name} 专栏'
+            elif self.type_name == "opus":
+                title = f"B站动态"
+            elif self.type_name == "read":
+                title = f"{self.name} 专栏"
             else:
-                self.error("unknown type") # pragma: no cover
+                self.error("unknown type")  # pragma: no cover
 
         return title

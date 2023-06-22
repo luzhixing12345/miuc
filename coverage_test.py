@@ -17,6 +17,20 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_githubio(self):
+
+        urls = [
+            "https://luzhixing12345.github.io/",
+            "https://luzhixing12345.github.io",
+            "https://luzhixing12345.github.io/zood/",
+            "https://xuan-insr.github.io/compile_principle/4%20Semantic%20Analysis/",
+            "https://luzhixing12345.github.io/tags/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/",
+            "https://luzhixing12345.github.io/2023/02/28/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/pws/",
+            "https://luzhixing12345.github.io/2023/02/28/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/VMware%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%85%8D%E7%BD%AE/"
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
+
     def test_stackoverflow(self):
         urls = [
             "https://stackoverflow.com",
@@ -34,6 +48,20 @@ class MiucUnitTest(unittest.TestCase):
             "https://stackoverflow.com/a/76521396/17869889"
         ]
 
+        for url in urls:
+            print(miuc.parse_url(url))
+
+    def test_youtube(self):
+
+        urls = [
+            "https://www.youtube.com/watch?v=SZj6rAYkYOg",
+            "https://www.youtube.com/watch?v=ErV-2tlf9Ls",
+            "https://www.youtube.com/@techquickie",
+            "https://www.youtube.com/watch?v=2pZmKW9-I_k&list=PL4cUxeGkcC9gUgr39Q_yD6v-bSyMwKPUI",
+            "https://www.youtube.com/watch?v=iTZ1-85I77c&list=PL4cUxeGkcC9gUgr39Q_yD6v-bSyMwKPUI&index=2",
+            "https://youtu.be/iTZ1-85I77c",
+            "https://www.youtube.com/@programmingwithmosh/videos"
+        ]
         for url in urls:
             print(miuc.parse_url(url))
 
