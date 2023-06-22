@@ -14,6 +14,7 @@
     "bugs": {
         "url": "https://github.com/luzhixing12345/miuc/issues"
     },
+    "icon": "./images/logo.png",
     "keywords": [
         "markdown",
         "url",

@@ -3,50 +3,19 @@
 import * as vscode from "vscode";
 import * as child_process from 'child_process';
 import { spawn } from 'child_process';
+import * as python from './common/python';
+
+
+let pythonPath:string = "";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 
     console.log('Congratulations, extension "miuc" is now active!');
 
-    // 注册命令
-    let disposablePython = vscode.commands.registerCommand('extensionCommand', async () => {
-        const pythonExtension = vscode.extensions.getExtension('ms-python.python');
-        if (!pythonExtension) {
-            vscode.window.showErrorMessage('Please install the Python extension.');
-            return;
-        }
-
-        if (!pythonExtension.isActive) {
-            await pythonExtension.activate();
-        }
-
-        const pythonApi = pythonExtension.exports;
-        if (!pythonApi) {
-            vscode.window.showErrorMessage('Failed to activate the Python extension.');
-            return;
-        }
-
-        const activePythonPath = pythonApi.getPythonPath();
-        const isMiuCInstalled = await isPackageInstalled(activePythonPath, 'miuc');
-
-        if (!isMiuCInstalled) {
-            const installMiuC = await vscode.window.showInformationMessage(
-                'The "miuc" package is not installed. Do you want to install it?',
-                'Yes', 'No'
-            );
-
-            if (installMiuC === 'Yes') {
-                await installPackage(activePythonPath, 'miuc');
-            }
-        } else {
-            console.log("miuc is installed");
-        }
-    });
-
-    context.subscriptions.push(disposablePython);
-
+    // first check if has python environment and miuc installed
+    await checkMiucEnvironment();
 
     let disposable = vscode.commands.registerCommand('miuc.myFunction', getUrlTitle);
     context.subscriptions.push(disposable);
@@ -58,6 +27,33 @@ export function activate(context: vscode.ExtensionContext) {
     );
 }
 
+async function checkMiucEnvironment() {
+
+    const pythonInterpreterDetails = await python.getInterpreterDetails(vscode.Uri.file(''));
+
+    if (!pythonInterpreterDetails.path) {
+        return;
+    }
+    // get the first python interpreter
+    const pythonInterpreterPath = pythonInterpreterDetails.path[0];
+    console.log('activate python interpreter path is ' + pythonInterpreterPath);
+    const isMiuCInstalled = await isPackageInstalled(pythonInterpreterPath, 'miuc');
+
+    if (!isMiuCInstalled) {
+        const installMiuC = await vscode.window.showInformationMessage(
+            'The "miuc" package is not installed. Do you want to install it?',
+            'Yes', 'No'
+        );
+
+        if (installMiuC === 'Yes') {
+            await installPackage(pythonInterpreterPath, 'miuc');
+        }
+    } else {
+        console.log("miuc is installed");
+    }
+    pythonPath = pythonInterpreterPath;
+}
+
 
 function getUrlTitle() {
     const clipboardTextPromise = vscode.env.clipboard.readText();
@@ -65,6 +61,7 @@ function getUrlTitle() {
     clipboardTextPromise.then(text => {
         if (isWebUrl(text)) {
             // call miuc
+            // const command = `${pythonPath} -m miuc ${text}`;
             const command = `miuc ${text}`;
             child_process.exec(command, (error, stdout) => {
                 if (error) {
@@ -78,7 +75,7 @@ function getUrlTitle() {
                 console.log(`miuc return：${result}`);
 
                 // insert
-                insertText(result, true);
+                insertText(result, false);
             });
         } else {
             insertText(text, false);
@@ -109,6 +106,8 @@ function isWebUrl(str: string): boolean {
 
 
 async function isPackageInstalled(pythonPath: string, packageName: string): Promise<boolean> {
+
+
     return new Promise<boolean>((resolve) => {
         const process = spawn(pythonPath, ['-m', 'pip', 'show', packageName]);
         process.on('close', (code) => {
