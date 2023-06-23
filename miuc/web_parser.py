@@ -8,7 +8,15 @@
 """
 import re
 import requests
-from .site_processor import GithubProcessor, StackoverflowProcessor, ZhihuProcessor, BilibiliProcessor, GithubioProcessor, YoutubeProcessor
+from .site_processor import (
+    GithubProcessor,
+    StackoverflowProcessor,
+    ZhihuProcessor,
+    BilibiliProcessor,
+    GithubioProcessor,
+    YoutubeProcessor,
+    CSDNProcessor,
+)
 from .site_processor import guess_name_by_url
 
 # some frequently pages
@@ -22,20 +30,22 @@ SPECIFIC_SITES = {
     r"^https://youtu\.be/.*/?": YoutubeProcessor,
     r"^https://zhuanlan\.zhihu\.com/?.*": ZhihuProcessor,
     r"^https://www\.zhihu\.com/?.*": ZhihuProcessor,
-    r"^https://www\.bilibili\.com/?.*": BilibiliProcessor
+    r"^https://www\.bilibili\.com/?.*": BilibiliProcessor,
+    r"^https://blog\.csdn\.net.*/?": CSDNProcessor,
+    r"^http://t\.csdn\.cn/.*": CSDNProcessor
 }
 
 
-def parse_url(url: str, max_time_limit:int = 5, more_detail:bool = False) -> str:
+def parse_url(url: str, max_time_limit: int = 5) -> str:
     """
-    parse url and return the title for the page
+    parse url and return the tite for the page
     """
 
     # first check the url whether in specific sites
-    # if so, 
+    # if so,
     for specific_page_url in SPECIFIC_SITES:
         if re.match(specific_page_url, url):
-            return SPECIFIC_SITES[specific_page_url](max_time_limit, more_detail)(url)
+            return SPECIFIC_SITES[specific_page_url](max_time_limit)(url)
 
     response = requests.get(url, timeout=max_time_limit)
     if response.status_code != 200:

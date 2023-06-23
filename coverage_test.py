@@ -100,5 +100,19 @@ class MiucUnitTest(unittest.TestCase):
             print(miuc.parse_url(url))
 
 
+    def test_CSDN(self):
+
+        urls = [
+            "https://blog.csdn.net/qq_46675545?type=blog",
+            "https://blog.csdn.net/qq_46675545/article/details/131323215?spm=1001.2014.3001.5502",
+            "https://blog.csdn.net/qq_46675545/article/details/131323215",
+            "http://t.csdn.cn/6eAx0",
+            "https://blog.csdn.net/qq_46675545/category_12120503.html",
+            "https://blog.csdn.net/qq_45726331/category_12220993.html"
+        ]
+
+        for url in urls:
+            print(miuc.parse_url(url))
+
 if __name__ == "__main__":
     unittest.main()

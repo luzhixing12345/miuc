@@ -5,10 +5,12 @@ import requests
 url = sys.argv[1]
 
 def main():
-    try:
-        result = miuc.parse_url(url,0.5)
-    except Exception as e:
-        result = f'[unknown]({url})'
+    result = miuc.parse_url(url,5)
+    # try:
+        
+    # except Exception as e:
+    #     print("get exception")
+    #     result = f'[unknown]({url})'
     print(result)
     
 

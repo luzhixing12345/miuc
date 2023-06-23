@@ -16,7 +16,6 @@ def main():
     parser = argparse.ArgumentParser("Markdown Intelligence Url Complete")
     parser.add_argument("-s", "--site", action="store_true", help="add site info")
     parser.add_argument("-t", "--max-time-limit", type=int, default=0.05, help="max time limit")
-    parser.add_argument("--detail", action="store_true", help="show more details")
     parser.add_argument("url", type=str, help="website url")
     args = parser.parse_args()
 
@@ -25,7 +24,7 @@ def main():
         exit(1)
 
     try:
-        markdown_url = parse_url(args.url, max_time_limit=args.t, more_detail=args.detail)
+        markdown_url = parse_url(args.url, max_time_limit=args.t)
     except Exception as e:
         if type(e) == Error:
             # cause exception in control
