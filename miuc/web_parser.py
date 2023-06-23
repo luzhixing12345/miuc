@@ -43,17 +43,6 @@ def parse_url(url: str, max_time_limit: int = 5) -> str:
 
     # first check the url whether in specific sites
     # if so,
-    for specific_page_url in SPECIFIC_SITES:
-        if re.match(specific_page_url, url):
-            return SPECIFIC_SITES[specific_page_url](max_time_limit)(url)
-
-    response = requests.get(url, timeout=max_time_limit)
-    if response.status_code != 200:
-        # 404 or other unusual error
-        return guess_name_by_url(url)
-
-    return parse_html(response.text)
-    
     try:
         for specific_page_url in SPECIFIC_SITES:
             if re.match(specific_page_url, url):
@@ -66,7 +55,7 @@ def parse_url(url: str, max_time_limit: int = 5) -> str:
 
         return parse_html(response.text)
     except Exception as e:
-        print(f"got error!: {url}")
+        
         return guess_name_by_url(url)
 
 def parse_html(html: str) -> str:

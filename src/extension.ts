@@ -75,7 +75,7 @@ function getUrlTitle() {
                 console.log(`miuc return：${result}`);
                 
                 const title = result.slice(1, result.lastIndexOf(']'));
-                console.log("title", title);
+                // console.log("title", title);
                 // insert
                 if (title === "unknown") {
                     insertText(result, true);

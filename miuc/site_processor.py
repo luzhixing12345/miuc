@@ -69,7 +69,7 @@ class Processor:
         """
         call this function if mismatch
         """
-        print(self.url)
+        # print(self.url)
         raise Error(self.url, self.class_name, message=msg)
 
     def get_html(self):
@@ -78,7 +78,6 @@ class Processor:
         """
         response = requests.get(self.url, headers=self.headers, timeout=self.max_time_limit)
         if response.status_code != 200:
-            print("?")
             self.error(f"connect {self.url} failed: status code [{response.status_code}]")
         return response.text
 
