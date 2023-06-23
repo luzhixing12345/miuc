@@ -53,7 +53,7 @@ def parse_url(url: str, max_time_limit: int = 5) -> str:
             # 404 or other unusual error
             return guess_name_by_url(url)
 
-        return parse_html(response.text)
+        return guess_name_by_url(url)
     except Exception as e:
         
         return guess_name_by_url(url)

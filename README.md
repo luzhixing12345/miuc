@@ -12,15 +12,19 @@ Paste URL by <kbd>ctrl</kbd> + <kbd>v</kbd>, miuc will complete the title for yo
 
 Search `miuc` in Vscode extension market or manually download the extension from [miuc-vscode-extension-market](https://marketplace.visualstudio.com/items?itemName=kamilu.miuc)
 
-If you prefer to use in command line, you could download miuc from PYPI
+Vscode Extension miuc depends on python program miuc, it asks you to download miuc by pip for the first time, you could also download by yourself
 
 ```bash
 pip install miuc
-``` 
+```
+
+**Actually, miuc is not mature**, if you meet any bug please report @ [miuc issues](https://github.com/luzhixing12345/miuc/issues)
 
 ## Usage
 
-use `miuc <url>` and return the markdown format url with title
+in Vscode, press <kbd>ctrl</kbd> + <kbd>v</kbd> to paste as usual, miuc will complete the title if URL in your clipboard
+
+in command line, use `miuc <url>` and return the markdown format url with title, you may need this one if you prefer vim/neovim and so on
 
 ```bash
 $ miuc <url>
