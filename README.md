@@ -2,9 +2,11 @@
 
 Markdown Intelligence Url Complete
 
+Paste URL by <kbd>ctrl</kbd> + <kbd>v</kbd>, miuc will complete the title for you
+
 ## Features
 
-![action](images/action.gif)
+![action](https://raw.githubusercontent.com/learner-lu/picbed/master/action.gif)
 
 ## Download
 
@@ -28,9 +30,7 @@ $ miuc https://github.com/luzhixing12345/miuc
 # [miuc](https://github.com/luzhixing12345/miuc)
 ```
 
-see more information from [miuc document]()
-
-## Extension Settings
+see more information from [miuc document](https://luzhixing12345.github.io/miuc/)
 
 ## Rerference
   

@@ -2,7 +2,7 @@
     "name": "miuc",
     "displayName": "miuc",
     "description": "markdown intelligent url complete",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engines": {
         "vscode": "^1.78.0"
     },

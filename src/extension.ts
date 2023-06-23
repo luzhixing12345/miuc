@@ -20,7 +20,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     let disposable1 = vscode.commands.registerCommand('miuc.myFunction', getUrlTitle);
     context.subscriptions.push(disposable1);
-    // 注册按键绑定
+    // register key map
     context.subscriptions.push(
         vscode.commands.registerCommand('miuc.myKeyBinding', () => {
             getUrlTitle();
@@ -33,7 +33,7 @@ export async function activate(context: vscode.ExtensionContext) {
             const selection = editor.selection;
             const selectedText = editor.document.getText(selection);
             console.log(selectedText);
-            // 取消选中文本
+            // cancel selected text
             editor.selection = new vscode.Selection(selection.active, selection.active);
 
             const currentLine = editor.document.lineAt(selection.active.line);
@@ -41,8 +41,8 @@ export async function activate(context: vscode.ExtensionContext) {
             console.log(lineText);
             const nextParenthesisIndex = lineText.indexOf(")", selection.active.character + 1);
             if (nextParenthesisIndex !== -1) {
+                // move to next position )
                 const nextPosition = new vscode.Position(selection.active.line, nextParenthesisIndex + 1);
-                // 移动光标到下一个位置
                 editor.selection = new vscode.Selection(nextPosition, nextPosition);
             }
         }
@@ -63,6 +63,7 @@ async function checkMiucEnvironment() {
     const isMiuCInstalled = await isPackageInstalled(pythonInterpreterPath, 'miuc');
 
     if (!isMiuCInstalled) {
+        // install miuc if not installed in current python environment
         const installMiuC = await vscode.window.showInformationMessage(
             'The "miuc" package is not installed. Do you want to install it?',
             'Yes', 'No'
@@ -72,7 +73,7 @@ async function checkMiucEnvironment() {
             await installPackage(pythonInterpreterPath, 'miuc');
         }
     } else {
-        console.log("miuc is installed");
+        // console.log("miuc is installed");
     }
     pythonPath = pythonInterpreterPath;
 }
@@ -88,16 +89,13 @@ function getUrlTitle() {
             // const command = `miuc ${text}`;
             child_process.exec(command, { encoding: 'buffer' }, (error, stdout) => {
                 if (error) {
-                    console.error(`miuc error：${error.message}`);
+                    // console.error(`miuc error：${error.message}`);
                     insertText(`[unknown](${text})`, true);
                     return;
                 }
 
-                // get result [title](url) from miuc
+                // get result [title](url) from miuc, use utf8 format
                 const result = iconv.decode(stdout, 'utf8').trim();
-                console.log(`miuc return: ${result}`);
-                // const result = stdout.trim();
-                // console.log(`miuc return：${result}`);
                 // insert
                 insertText(result, true);
 
@@ -132,7 +130,7 @@ function isWebUrl(str: string): boolean {
 
 async function isPackageInstalled(pythonPath: string, packageName: string): Promise<boolean> {
 
-
+    // check by pip show
     return new Promise<boolean>((resolve) => {
         const process = spawn(pythonPath, ['-m', 'pip', 'show', packageName]);
         process.on('close', (code) => {
