@@ -85,9 +85,6 @@ function getUrlTitle() {
         if (isWebUrl(text)) {
             // call miuc
             const command = `${pythonPath} -m miuc.main ${text}`;
-            const options = {
-                encoding: 'utf8'
-            };
             // const command = `miuc ${text}`;
             child_process.exec(command, { encoding: 'buffer' }, (error, stdout) => {
                 if (error) {

@@ -4,6 +4,8 @@ Markdown Intelligence Url Complete
 
 ## Features
 
+![action](images/action.gif)
+
 ## Download
 
 Search `miuc` in Vscode extension market or manually download the extension from [miuc-vscode-extension-market](https://marketplace.visualstudio.com/items?itemName=kamilu.miuc)
