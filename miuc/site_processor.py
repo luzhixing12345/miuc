@@ -69,6 +69,7 @@ class Processor:
         """
         call this function if mismatch
         """
+        print(self.url)
         raise Error(self.url, self.class_name, message=msg)
 
     def get_html(self):
@@ -91,21 +92,35 @@ class GithubProcessor(Processor):
         self.site = "Github"
         self.user_name = None
         self.repo_name = None
+        self.repo_function = None # issues | pull | actions
+        self.repo_function_name = None # issue name
         self.branch_name = None
         self.file_name = None
         self.tab_name = None
+        self.routine = None
+        
 
         self.urls_re = [
             re.compile(r"^https://github\.com/?$"),
             re.compile(r"^https://github\.com/(?P<user>[^/]*?)\?tab=(?P<tab>.*?)/?$"),
-            re.compile(r"^https://github\.com/(?P<user>[^/]*?)/?$"),
+            re.compile(r"^https://github\.com/(?P<user>[^/]*?)$/?"),
             re.compile(r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/?$"),
+            
             re.compile(
                 r"^https://github.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/blob/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$"
             ),
             re.compile(
+                r"^https://github.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/files/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$"
+            ),
+            re.compile(
                 r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/tree/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$"
             ),
+            re.compile(
+                r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/commits?/(?P<commit>.*)$"
+            ),
+            re.compile(r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/\?]*?)/?$"),
+            re.compile(r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)\?.*$"),
+            re.compile(r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)/(?P<routine>.*?)(?:#.*)?$")   
         ]
 
         # "https://github.com/{user}"
@@ -123,6 +138,20 @@ class GithubProcessor(Processor):
                     self.user_name = res.group("user")
                 if "repo" in res.groupdict():
                     self.repo_name = res.group("repo")
+                    if 'commit' in res.groupdict("commit"):
+                        self.repo_name += ' commit'
+                if 'function' in res.groupdict():
+                    self.repo_function = res.group('function')
+                    if 'routine' in res.groupdict():
+                        self.routine = res.group('routine')
+                        has_id = self.routine.split('/')[0].isdigit()
+                        if has_id:
+                            html = self.get_html()
+                            # for issue and pull
+                            pattern = re.compile(r'<bdi class="js-issue-title markdown-title">(.*?)</bdi>')
+                            self.repo_function_name = pattern.search(html).group(1)
+                        else:
+                            self.repo_function_name = self.routine.split('/')[-1]
                 if "branch" in res.groupdict():
                     self.branch_name = res.group("branch")
                 if "file" in res.groupdict():
@@ -136,12 +165,18 @@ class GithubProcessor(Processor):
 
     def format(self):
         if self.repo_name is None and self.user_name is None:
-            return f"[{self.site}]({self.url})"
+            return self.site
 
         if self.repo_name:
             title = self.repo_name
-            if self.file_name:
+            if self.repo_function:
+                title += f' {self.repo_function}'
+                if self.repo_function_name:
+                    title = self.repo_function_name
+            elif self.file_name:
                 title += f" {self.file_name}"
+            elif self.routine:
+                title = self.routine
         else:
             title = self.user_name
             if self.tab_name:
@@ -163,8 +198,8 @@ class GithubioProcessor(Processor):
 
         self.urls_re = [
             re.compile(r"^https://(?P<user>.*?)\.github\.io/?$"),  # blog / resume
-            re.compile(r"^https://(?P<user>.*?)\.github.io/(?P<repo>.*?)/?$"),  # github repo
-            re.compile(r"^https://(?P<user>.*?)\.github.io/(?P<repo>.*?)/(?P<routine>.*?)/?$"),
+            re.compile(r"^https://(?P<user>.*?)\.github\.io/(?P<repo>.*?)/(?P<routine>.+?)/?$"),
+            re.compile(r"^https://(?P<user>.*?)\.github\.io/(?P<repo>.*?)/?$"),  # github repo
         ]
 
     def parse(self) -> str:

@@ -23,15 +23,15 @@ from .site_processor import guess_name_by_url
 
 SPECIFIC_SITES = {
     # url: page_processor
-    r"^https://github\.com/?.*": GithubProcessor,
-    r"^https://.*?\.github\.io/?.*?/?.*": GithubioProcessor,
-    r"^https://stackoverflow\.com/?.*": StackoverflowProcessor,
-    r"^https://www\.youtube\.com/?.*$": YoutubeProcessor,
-    r"^https://youtu\.be/.*/?": YoutubeProcessor,
-    r"^https://zhuanlan\.zhihu\.com/?.*": ZhihuProcessor,
-    r"^https://www\.zhihu\.com/?.*": ZhihuProcessor,
-    r"^https://www\.bilibili\.com/?.*": BilibiliProcessor,
-    r"^https://blog\.csdn\.net.*/?": CSDNProcessor,
+    r"^https://github\.com.*": GithubProcessor,
+    r"^https://.*?\.github\.io.*": GithubioProcessor,
+    r"^https://stackoverflow\.com.*": StackoverflowProcessor,
+    r"^https://www\.youtube\.com.*$": YoutubeProcessor,
+    r"^https://youtu\.be/.*": YoutubeProcessor,
+    r"^https://zhuanlan\.zhihu\.com.*": ZhihuProcessor,
+    r"^https://www\.zhihu\.com.*": ZhihuProcessor,
+    r"^https://www\.bilibili\.com.*": BilibiliProcessor,
+    r"^https://blog\.csdn\.net.*": CSDNProcessor,
     r"^http://t\.csdn\.cn/.*": CSDNProcessor
 }
 
@@ -53,7 +53,21 @@ def parse_url(url: str, max_time_limit: int = 5) -> str:
         return guess_name_by_url(url)
 
     return parse_html(response.text)
+    
+    try:
+        for specific_page_url in SPECIFIC_SITES:
+            if re.match(specific_page_url, url):
+                return SPECIFIC_SITES[specific_page_url](max_time_limit)(url)
 
+        response = requests.get(url, timeout=max_time_limit)
+        if response.status_code != 200:
+            # 404 or other unusual error
+            return guess_name_by_url(url)
+
+        return parse_html(response.text)
+    except Exception as e:
+        print(f"got error!: {url}")
+        return guess_name_by_url(url)
 
 def parse_html(html: str) -> str:
     """

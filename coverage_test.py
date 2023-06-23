@@ -13,6 +13,17 @@ class MiucUnitTest(unittest.TestCase):
             "https://github.com/luzhixing12345?tab=following",
             "https://github.com/fadedzipper/zCore-Tutorial/tree/dev",
             "https://github.com/fadedzipper/zCore-Tutorial/blob/dev/docs/book.toml",
+            "https://github.com/microsoft/vscode/issues",
+            "https://github.com/microsoft/vscode/issues/178962",
+            "https://github.com/microsoft/vscode/pull/185924/files",
+            "https://github.com/microsoft/vscode/issues/178962#issuecomment-1496530894",
+            "https://github.com/microsoft/vscode/wiki/Submitting-Bugs-and-Suggestions",
+            "https://github.com/microsoft/vscode/actions",
+            "https://github.com/microsoft/vscode/projects?query=is%3Aopen",
+            "https://github.com/microsoft/vscode/graphs/contributors",
+            "https://github.com/microsoft/vscode/network/dependencies",
+            "https://github.com/microsoft/vscode/commits/main",
+            "https://github.com/microsoft/vscode/commit/a5727468f373af49f785a94e13e7a2890a1097af"
         ]
         for url in urls:
             print(miuc.parse_url(url))

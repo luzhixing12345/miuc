@@ -6,7 +6,7 @@ import { spawn } from 'child_process';
 import * as python from './common/python';
 
 
-let pythonPath:string = "";
+let pythonPath: string = "";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -61,8 +61,8 @@ function getUrlTitle() {
     clipboardTextPromise.then(text => {
         if (isWebUrl(text)) {
             // call miuc
-            // const command = `${pythonPath} -m miuc ${text}`;
-            const command = `miuc ${text}`;
+            const command = `${pythonPath} -m miuc.main ${text}`;
+            // const command = `miuc ${text}`;
             child_process.exec(command, (error, stdout) => {
                 if (error) {
                     console.error(`miuc error：${error.message}`);
@@ -73,9 +73,16 @@ function getUrlTitle() {
                 // get result [title](url) from miuc
                 const result = stdout.trim();
                 console.log(`miuc return：${result}`);
-
+                
+                const title = result.slice(1, result.lastIndexOf(']'));
+                console.log("title", title);
                 // insert
-                insertText(result, false);
+                if (title === "unknown") {
+                    insertText(result, true);
+                } else {
+                    insertText(result, false);
+                }
+                
             });
         } else {
             insertText(text, false);
