@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 import * as child_process from 'child_process';
 import { spawn } from 'child_process';
+import * as iconv from 'iconv-lite';
 import * as python from './common/python';
 
 
@@ -17,14 +18,36 @@ export async function activate(context: vscode.ExtensionContext) {
     // first check if has python environment and miuc installed
     await checkMiucEnvironment();
 
-    let disposable = vscode.commands.registerCommand('miuc.myFunction', getUrlTitle);
-    context.subscriptions.push(disposable);
+    let disposable1 = vscode.commands.registerCommand('miuc.myFunction', getUrlTitle);
+    context.subscriptions.push(disposable1);
     // 注册按键绑定
     context.subscriptions.push(
         vscode.commands.registerCommand('miuc.myKeyBinding', () => {
             getUrlTitle();
         })
     );
+
+    let disposable2 = vscode.commands.registerCommand('miuc.tabKey', () => {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const selection = editor.selection;
+            const selectedText = editor.document.getText(selection);
+            console.log(selectedText);
+            // 取消选中文本
+            editor.selection = new vscode.Selection(selection.active, selection.active);
+
+            const currentLine = editor.document.lineAt(selection.active.line);
+            const lineText = currentLine.text;
+            console.log(lineText);
+            const nextParenthesisIndex = lineText.indexOf(")", selection.active.character + 1);
+            if (nextParenthesisIndex !== -1) {
+                const nextPosition = new vscode.Position(selection.active.line, nextParenthesisIndex + 1);
+                // 移动光标到下一个位置
+                editor.selection = new vscode.Selection(nextPosition, nextPosition);
+            }
+        }
+    });
+    context.subscriptions.push(disposable2);
 }
 
 async function checkMiucEnvironment() {
@@ -62,8 +85,11 @@ function getUrlTitle() {
         if (isWebUrl(text)) {
             // call miuc
             const command = `${pythonPath} -m miuc.main ${text}`;
+            const options = {
+                encoding: 'utf8'
+            };
             // const command = `miuc ${text}`;
-            child_process.exec(command, (error, stdout) => {
+            child_process.exec(command, { encoding: 'buffer' }, (error, stdout) => {
                 if (error) {
                     console.error(`miuc error：${error.message}`);
                     insertText(`[unknown](${text})`, true);
@@ -71,18 +97,13 @@ function getUrlTitle() {
                 }
 
                 // get result [title](url) from miuc
-                const result = stdout.trim();
-                console.log(`miuc return：${result}`);
-                
-                const title = result.slice(1, result.lastIndexOf(']'));
-                // console.log("title", title);
+                const result = iconv.decode(stdout, 'utf8').trim();
+                console.log(`miuc return: ${result}`);
+                // const result = stdout.trim();
+                // console.log(`miuc return：${result}`);
                 // insert
-                if (title === "unknown") {
-                    insertText(result, true);
-                } else {
-                    insertText(result, false);
-                }
-                
+                insertText(result, true);
+
             });
         } else {
             insertText(text, false);

@@ -18,8 +18,13 @@ def guess_name_by_url(url):
     when could not access the website or get the html, guess the name by url
     """
     url_title = re.sub(r"^https?://", "", url)
+    urls = url_title.split(".")
+    if urls[0] == 'www':
+        urls = urls[1:-1]
+    else:
+        urls = urls[:-1]
     # remove top domains
-    url_title = ".".join(url_title.split(".")[:-1])
+    url_title = ".".join(urls)
     return f"[{url_title}]({url})"
 
 

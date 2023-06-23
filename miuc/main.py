@@ -9,7 +9,8 @@
 
 import argparse
 from .web_parser import parse_url
-from .site_processor import Error, guess_name_by_url
+import io
+import sys
 
 
 def main():
@@ -25,6 +26,7 @@ def main():
         exit(1)
 
     markdown_url = parse_url(args.url, max_time_limit=args.max_time_limit)
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     print(markdown_url)
     
 
