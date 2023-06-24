@@ -14,7 +14,7 @@ Paste URL by <kbd>ctrl</kbd> + <kbd>v</kbd>, miuc will complete the title for yo
 
 Search `miuc` in Vscode extension market or manually download the extension from [miuc-vscode-extension-market](https://marketplace.visualstudio.com/items?itemName=kamilu.miuc)
 
-Vscode Extension miuc depends on python program miuc, it asks you to download miuc by pip for the first time, you could also download by yourself
+Vscode Extension miuc depends on python library [miuc](https://pypi.org/project/miuc/), if you miss the auto download, please download manually in your activate python environment
 
 ```bash
 pip install miuc
@@ -30,10 +30,11 @@ in command line, use `miuc <url>` and return the markdown format url with title,
 
 ```bash
 $ miuc <url>
-# [article-title](url)
+[title](url)
 
+# for example
 $ miuc https://github.com/luzhixing12345/miuc
-# [miuc](https://github.com/luzhixing12345/miuc)
+[miuc](https://github.com/luzhixing12345/miuc)
 ```
 
 see more information from [miuc document](https://luzhixing12345.github.io/miuc/)
@@ -42,3 +43,4 @@ see more information from [miuc document](https://luzhixing12345.github.io/miuc/
   
 - [brandmark](https://brandmark.io/)
 - [autopep8](https://github.com/microsoft/vscode-autopep8)
+- [icons8](https://icons8.com/icons/set/logo)
