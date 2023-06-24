@@ -1,5 +1,7 @@
 # miuc
 
+[![codecov](https://codecov.io/gh/luzhixing12345/miuc/branch/main/graph/badge.svg?)](https://codecov.io/gh/luzhixing12345/miuc)
+
 Markdown Intelligence Url Complete
 
 Paste URL by <kbd>ctrl</kbd> + <kbd>v</kbd>, miuc will complete the title for you

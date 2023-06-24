@@ -11,21 +11,7 @@ import re
 import requests
 import urllib
 import json
-
-
-def guess_name_by_url(url):
-    """
-    when could not access the website or get the html, guess the name by url
-    """
-    url_title = re.sub(r"^https?://", "", url)
-    urls = url_title.split(".")
-    if urls[0] == 'www':
-        urls = urls[1:-1]
-    else:
-        urls = urls[:-1]
-    # remove top domains
-    url_title = ".".join(urls)
-    return f"[{url_title}]({url})"
+from .utils import guess_name_by_url
 
 
 class Error(Exception):
@@ -52,6 +38,8 @@ class Processor:
         self.url: str = url
         self.parse()
         title = self.format()
+        if title is None or title == "":  # pragma: no cover
+            return guess_name_by_url(self.url)
         return f"[{title}]({self.url})"
 
     def parse(self) -> str:  # pragma: no cover
@@ -83,8 +71,17 @@ class Processor:
         """
         response = requests.get(self.url, headers=self.headers, timeout=self.max_time_limit)
         if response.status_code != 200:
-            self.error(f"connect {self.url} failed: status code [{response.status_code}]")
+            self.error(
+                f"connect {self.url} failed: status code [{response.status_code}]"
+            )  # pragma: no cover
         return response.text
+
+    def _debug(self, html):  # pragma: no cover
+        """
+        only work for me to debug
+        """
+        with open("a.html", "w", encoding="utf-8") as f:
+            f.write(html)
 
 
 class GithubProcessor(Processor):
@@ -96,20 +93,18 @@ class GithubProcessor(Processor):
         self.site = "Github"
         self.user_name = None
         self.repo_name = None
-        self.repo_function = None # issues | pull | actions
-        self.repo_function_name = None # issue name
+        self.repo_function = None  # issues | pull | actions
+        self.repo_function_name = None  # issue name
         self.branch_name = None
         self.file_name = None
         self.tab_name = None
         self.routine = None
-        
 
         self.urls_re = [
             re.compile(r"^https://github\.com/?$"),
             re.compile(r"^https://github\.com/(?P<user>[^/]*?)\?tab=(?P<tab>.*?)/?$"),
             re.compile(r"^https://github\.com/(?P<user>[^/]*?)$/?"),
             re.compile(r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/?$"),
-            
             re.compile(
                 r"^https://github.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/blob/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$"
             ),
@@ -122,9 +117,15 @@ class GithubProcessor(Processor):
             re.compile(
                 r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/commits?/(?P<commit>.*)$"
             ),
-            re.compile(r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/\?]*?)/?$"),
-            re.compile(r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)\?.*$"),
-            re.compile(r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)/(?P<routine>.*?)(?:#.*)?$")   
+            re.compile(
+                r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/\?]*?)/?$"
+            ),
+            re.compile(
+                r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)\?.*$"
+            ),
+            re.compile(
+                r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)/(?P<routine>.*?)(?:#.*)?$"
+            ),
         ]
 
         # "https://github.com/{user}"
@@ -142,20 +143,22 @@ class GithubProcessor(Processor):
                     self.user_name = res.group("user")
                 if "repo" in res.groupdict():
                     self.repo_name = res.group("repo")
-                    if 'commit' in res.groupdict("commit"):
-                        self.repo_name += ' commit'
-                if 'function' in res.groupdict():
-                    self.repo_function = res.group('function')
-                    if 'routine' in res.groupdict():
-                        self.routine = res.group('routine')
-                        has_id = self.routine.split('/')[0].isdigit()
+                    if "commit" in res.groupdict("commit"):
+                        self.repo_name += " commit"
+                if "function" in res.groupdict():
+                    self.repo_function = res.group("function")
+                    if "routine" in res.groupdict():
+                        self.routine = res.group("routine")
+                        has_id = self.routine.split("/")[0].isdigit()
                         if has_id:
                             html = self.get_html()
                             # for issue and pull
-                            pattern = re.compile(r'<bdi class="js-issue-title markdown-title">(.*?)</bdi>')
+                            pattern = re.compile(
+                                r'<bdi class="js-issue-title markdown-title">(.*?)</bdi>'
+                            )
                             self.repo_function_name = pattern.search(html).group(1)
                         else:
-                            self.repo_function_name = self.routine.split('/')[-1]
+                            self.repo_function_name = self.routine.split("/")[-1]
                 if "branch" in res.groupdict():
                     self.branch_name = res.group("branch")
                 if "file" in res.groupdict():
@@ -169,18 +172,16 @@ class GithubProcessor(Processor):
 
     def format(self):
         if self.repo_name is None and self.user_name is None:
-            return self.site
-
+            title = self.site
+        title = ""
         if self.repo_name:
             title = self.repo_name
             if self.repo_function:
-                title += f' {self.repo_function}'
+                title += f" {self.repo_function}"
                 if self.repo_function_name:
                     title = self.repo_function_name
             elif self.file_name:
                 title += f" {self.file_name}"
-            elif self.routine:
-                title = self.routine
         else:
             title = self.user_name
             if self.tab_name:
@@ -218,7 +219,7 @@ class GithubioProcessor(Processor):
                     origin_routine = res.group("routine").split("/")[-1]
                     self.routine = urllib.parse.unquote(origin_routine)
                 return
-        self.error("unknown url")
+        self.error("unknown url")  # pragma: no cover
 
     def format(self):
         if self.repo_name is None:
@@ -299,8 +300,6 @@ class StackoverflowProcessor(Processor):
             title = self.question_name
             if self.is_answer:
                 title += " [answer]"
-            else:
-                title += " [question]"
         elif self.tag_name:
             title = f"{self.tag_name} tag"
         elif self.user_name:
@@ -363,12 +362,12 @@ class YoutubeProcessor(Processor):
 class ZhihuProcessor(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
-        self.site = "Zhihu"
+        self.site = "知乎"
         self.type_name = None
         self.title = None
 
         self.urls_re = [
-            re.compile(r"^https://www\.zhihu\.com/?$"),
+            re.compile(r"(?P<site>^https://www\.zhihu\.com)/?$"),
             re.compile(r"^https://www\.zhihu\.com/question/\d+/(?P<type>.*?)/(?P<id>.*?)/?$"),
             re.compile(r"^https://www\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/(?P<sub_type>.*?)/?$"),
             re.compile(r"^https://www\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$"),
@@ -397,8 +396,8 @@ class ZhihuProcessor(Processor):
         for url_re in self.urls_re:
             res = url_re.match(self.url)
             if res:
-                if "type" not in res.groupdict():
-                    self.title = "知乎"
+                if "site" in res.groupdict():
+                    self.title = self.site
                     return
                 self.type_name = res.group("type")
 
@@ -459,7 +458,7 @@ class BilibiliProcessor(Processor):
         self.name = None
 
         self.urls_re = [
-            re.compile(r"^https://www\.bilibili\.com/?$"),
+            re.compile(r"(?P<site>^https://www\.bilibili\.com)/?$"),
             re.compile(r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*?)\?.*$"),
             re.compile(r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*)$"),
         ]
@@ -473,8 +472,7 @@ class BilibiliProcessor(Processor):
             res = url_re.match(self.url)
 
             if res:
-                if "type" not in res.groupdict():
-                    # pure bilibili
+                if "site" in res.groupdict():
                     return
                 self.type_name = res.group("type")
                 self.id = res.group("id")
@@ -521,7 +519,7 @@ class CSDNProcessor(Processor):
         self.article_name = None
 
         self.urls_re = [
-            re.compile(r"^https://blog\.csdn\.net/?$"),
+            re.compile(r"(?P<site>^https://blog\.csdn\.net)/?$"),
             re.compile(r"^https://blog\.csdn\.net/(?P<user_id>.*?)/(?P<category>.*?)\.html$"),
             re.compile(r"^https://blog\.csdn\.net/(?P<user_id>.*?)\?type=.*$"),
             re.compile(
@@ -537,9 +535,8 @@ class CSDNProcessor(Processor):
         for url_re in self.urls_re:
             res = url_re.match(self.url)
             if res:
-                if "user_id" not in res.groupdict() and "short_id" not in res.groupdict():
+                if "site" in res.groupdict():
                     return
-
                 html = self.get_html()
                 # with open("a.txt",'w',encoding='utf-8') as f:
                 #     f.write(html)
@@ -575,4 +572,57 @@ class CSDNProcessor(Processor):
                 title = self.article_name
             else:
                 title = self.user_name
+        return title
+
+
+class Githubusercontent(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+
+    def parse(self) -> str:
+        return
+
+    def format(self):
+        return "image"
+
+
+class CNblog(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "博客园"
+        self.author_name = None
+        self.article_name = None
+
+        self.urls_re = [
+            re.compile(r"(?P<site>^https://www\.cnblogs\.com)/?$"),
+            re.compile(r"^https://www\.cnblogs\.com/(?P<author>.*?)/p/(?P<article>.*?)/?$"),
+            re.compile(r"^https://www\.cnblogs\.com/(?P<author>.*?)/?$"),
+        ]
+
+    def parse(self) -> str:
+        for url_re in self.urls_re:
+            res = url_re.match(self.url)
+            if res:
+                if "site" in res.groupdict():
+                    return
+                self.author_name = res.group("author")
+                html = self.get_html()
+                if "article" in res.groupdict():
+                    pattern = re.compile(r'<span role="heading" aria-level="2">(.*?)</span>')
+                    self.article_name = pattern.search(html).group(1)
+                else:
+                    pattern = re.compile(
+                        r'<a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/.*">(.*?)</a>'
+                    )
+                    self.author_name = pattern.search(html).group(1)
+
+    def format(self):
+        if self.author_name is None:
+            title = self.site
+        else:
+            if self.article_name:
+                title = self.article_name
+            else:
+                title = self.author_name
+
         return title

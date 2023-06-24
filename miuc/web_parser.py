@@ -16,8 +16,10 @@ from .site_processor import (
     GithubioProcessor,
     YoutubeProcessor,
     CSDNProcessor,
+    Githubusercontent,
+    CNblog
 )
-from .site_processor import guess_name_by_url
+from .utils import guess_name_by_url
 
 # some frequently pages
 
@@ -32,7 +34,9 @@ SPECIFIC_SITES = {
     r"^https://www\.zhihu\.com.*": ZhihuProcessor,
     r"^https://www\.bilibili\.com.*": BilibiliProcessor,
     r"^https://blog\.csdn\.net.*": CSDNProcessor,
-    r"^http://t\.csdn\.cn/.*": CSDNProcessor
+    r"^http://t\.csdn\.cn/.*": CSDNProcessor,
+    r"^https://raw\.githubusercontent\.com.*": Githubusercontent,
+    r"^https://www\.cnblogs\.com.*": CNblog
 }
 
 
@@ -48,15 +52,15 @@ def parse_url(url: str, max_time_limit: int = 5) -> str:
             if re.match(specific_page_url, url):
                 return SPECIFIC_SITES[specific_page_url](max_time_limit)(url)
 
-        response = requests.get(url, timeout=max_time_limit)
-        if response.status_code != 200:
+        # response = requests.get(url, timeout=max_time_limit)
+        # if response.status_code != 200:
             # 404 or other unusual error
-            return guess_name_by_url(url)
-
+            # return guess_name_by_url(url)
+        # print('ok')
         return guess_name_by_url(url)
     except Exception as e:
-        
         return guess_name_by_url(url)
+
 
 def parse_html(html: str) -> str:
     """
