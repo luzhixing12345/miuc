@@ -4,7 +4,7 @@
 url = 
 
 test:
-	python -m miuc.main url
+	@python -m miuc.main $(url)
 
 cover:
 	coverage run coverage_test.py

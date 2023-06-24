@@ -9,34 +9,39 @@
 import re
 import requests
 from .site_processor import (
-    GithubProcessor,
-    StackoverflowProcessor,
-    ZhihuProcessor,
-    BilibiliProcessor,
-    GithubioProcessor,
-    YoutubeProcessor,
-    CSDNProcessor,
+    Github,
+    Stackoverflow,
+    Zhihu,
+    Bilibili,
+    Githubio,
+    Youtube,
+    CSDN,
     Githubusercontent,
-    CNblog
+    CNblog,
+    Jianshu,
+    TecentCloud
 )
 from .utils import guess_name_by_url
+from urllib.parse import unquote
 
 # some frequently pages
 
 SPECIFIC_SITES = {
     # url: page_processor
-    r"^https://github\.com.*": GithubProcessor,
-    r"^https://.*?\.github\.io.*": GithubioProcessor,
-    r"^https://stackoverflow\.com.*": StackoverflowProcessor,
-    r"^https://www\.youtube\.com.*$": YoutubeProcessor,
-    r"^https://youtu\.be/.*": YoutubeProcessor,
-    r"^https://zhuanlan\.zhihu\.com.*": ZhihuProcessor,
-    r"^https://www\.zhihu\.com.*": ZhihuProcessor,
-    r"^https://www\.bilibili\.com.*": BilibiliProcessor,
-    r"^https://blog\.csdn\.net.*": CSDNProcessor,
-    r"^http://t\.csdn\.cn/.*": CSDNProcessor,
+    r"^https://github\.com.*": Github,
+    r"^https://.*?\.github\.io.*": Githubio,
+    r"^https://stackoverflow\.com.*": Stackoverflow,
+    r"^https://www\.youtube\.com.*$": Youtube,
+    r"^https://youtu\.be/.*": Youtube,
+    r"^https://zhuanlan\.zhihu\.com.*": Zhihu,
+    r"^https://www\.zhihu\.com.*": Zhihu,
+    r"^https://www\.bilibili\.com.*": Bilibili,
+    r"^https://blog\.csdn\.net.*": CSDN,
+    r"^http://t\.csdn\.cn/.*": CSDN,
     r"^https://raw\.githubusercontent\.com.*": Githubusercontent,
-    r"^https://www\.cnblogs\.com.*": CNblog
+    r"^https://www\.cnblogs\.com.*": CNblog,
+    r"^https://www\.jianshu\.com.*": Jianshu,
+    r"^https://cloud\.tencent\.com.*": TecentCloud
 }
 
 
@@ -44,7 +49,7 @@ def parse_url(url: str, max_time_limit: int = 5) -> str:
     """
     parse url and return the tite for the page
     """
-
+    url = unquote(url)
     # first check the url whether in specific sites
     # if so,
     try:

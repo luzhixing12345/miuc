@@ -84,7 +84,7 @@ class Processor:
             f.write(html)
 
 
-class GithubProcessor(Processor):
+class Github(Processor):
     # https://github.com/microsoft/vscode
 
     def __init__(self, max_time_limit: int = 5) -> None:
@@ -99,11 +99,12 @@ class GithubProcessor(Processor):
         self.file_name = None
         self.tab_name = None
         self.routine = None
+        self.search_name = None
 
         self.urls_re = [
             re.compile(r"^https://github\.com/?$"),
             re.compile(r"^https://github\.com/(?P<user>[^/]*?)\?tab=(?P<tab>.*?)/?$"),
-            re.compile(r"^https://github\.com/(?P<user>[^/]*?)$/?"),
+            re.compile(r"^https://github\.com/(?P<user>[^/\?]*?)$/?"),
             re.compile(r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/?$"),
             re.compile(
                 r"^https://github.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/blob/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$"
@@ -126,6 +127,7 @@ class GithubProcessor(Processor):
             re.compile(
                 r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)/(?P<routine>.*?)(?:#.*)?$"
             ),
+            re.compile(r'^https://github\.com/search\?q=(?P<search>.*?)((&.*)|(:.*))?/?$')
         ]
 
         # "https://github.com/{user}"
@@ -165,6 +167,8 @@ class GithubProcessor(Processor):
                     self.file_name = res.group("file").split("/")[-1]
                 if "tab" in res.groupdict():
                     self.tab_name = res.group("tab")
+                if 'search' in res.groupdict():
+                    self.search_name = res.group('search')
                 return
 
         # should never reach here
@@ -186,11 +190,13 @@ class GithubProcessor(Processor):
             title = self.user_name
             if self.tab_name:
                 title += f" {self.tab_name}"
+        if self.search_name:
+            title = f'{self.site} search {self.search_name}'
 
         return title
 
 
-class GithubioProcessor(Processor):
+class Githubio(Processor):
     """
     most likely one's blog or github page document site
     """
@@ -217,7 +223,7 @@ class GithubioProcessor(Processor):
                     self.repo_name = res.group("repo")
                 if "routine" in res.groupdict():
                     origin_routine = res.group("routine").split("/")[-1]
-                    self.routine = urllib.parse.unquote(origin_routine)
+                    self.routine = origin_routine
                 return
         self.error("unknown url")  # pragma: no cover
 
@@ -232,7 +238,7 @@ class GithubioProcessor(Processor):
         return title
 
 
-class StackoverflowProcessor(Processor):
+class Stackoverflow(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
         self.site = "stackoverflow"
@@ -311,7 +317,7 @@ class StackoverflowProcessor(Processor):
         return title
 
 
-class YoutubeProcessor(Processor):
+class Youtube(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
         self.site = "youtube"
@@ -359,7 +365,7 @@ class YoutubeProcessor(Processor):
         return title
 
 
-class ZhihuProcessor(Processor):
+class Zhihu(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
         self.site = "知乎"
@@ -448,7 +454,7 @@ class ZhihuProcessor(Processor):
         return self.title
 
 
-class BilibiliProcessor(Processor):
+class Bilibili(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
         self.site = "bilibli"
@@ -509,7 +515,7 @@ class BilibiliProcessor(Processor):
         return title
 
 
-class CSDNProcessor(Processor):
+class CSDN(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
         self.site = "csdn"
@@ -538,8 +544,7 @@ class CSDNProcessor(Processor):
                 if "site" in res.groupdict():
                     return
                 html = self.get_html()
-                # with open("a.txt",'w',encoding='utf-8') as f:
-                #     f.write(html)
+                # self._debug(html)
 
                 if "article_id" in res.groupdict():
                     self.user_id = res.group("user_id")
@@ -548,7 +553,7 @@ class CSDNProcessor(Processor):
                     self.url = (
                         f"https://blog.csdn.net/{self.user_id}/article/details/{self.article_id}"
                     )
-                    pattern = re.compile(r'<meta name="keywords" content="(.*?)">')
+                    pattern = re.compile(r'<h1 class="title-article" id="articleContentId">(.*?)</h1>')
                     self.article_name = pattern.search(html).group(1)
                 elif "category" in res.groupdict():
                     pattern = re.compile(r'<h3 class="column_title oneline" title=.*>(.*?)</h3>')
@@ -626,3 +631,84 @@ class CNblog(Processor):
                 title = self.author_name
 
         return title
+
+
+class Jianshu(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = '简书'
+        self.article_name = None
+        self.user_name = None
+
+        self.urls_re = [
+            re.compile(r'(?P<site>^https://www\.jianshu\.com)/?$'),
+            re.compile(r'^https://www\.jianshu\.com/p/(?P<article>.*?)/?$'),
+            re.compile(r'^https://www\.jianshu\.com/u/(?P<user>.*?)/?$'),
+        ]
+
+    def parse(self) -> str:
+    
+        for url_re in self.urls_re:
+            res = url_re.match(self.url)
+
+            if res:
+                if 'site' in res.groupdict():
+                    return
+                html = self.get_html()
+                if 'article' in res.groupdict():
+                    pattern = re.compile(r'<h1 class="_1RuRku">(.*?)</h1>')
+                    self.article_name = pattern.search(html).group(1)
+                if 'user' in res.groupdict():
+                    pattern = re.compile(r'<a class="name" href=.*?>(.*?)</a>')
+                    self.user_name = pattern.search(html).group(1)
+    
+    def format(self):
+
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+        elif self.user_name:
+            title = self.user_name
+        return title
+    
+class TecentCloud(Processor):
+
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = 'tencent cloud'
+        self.article_name = None
+        self.user_name = None
+
+        self.urls_re = [
+            re.compile(r'(?P<site>^https://cloud.tencent.com)/?$'),
+            re.compile(r'^https://cloud.tencent.com/developer/article/(?P<article>.*?)/?$'),
+            re.compile(r'^https://cloud.tencent.com/developer/user/(?P<user>.*?)/?$')
+        ]
+
+    def parse(self) -> str:
+        
+        for url_re in self.urls_re:
+            res = url_re.match(self.url)
+            if res:
+                if 'site' in res.groupdict():
+                    return
+
+                html = self.get_html()
+                if 'article' in res.groupdict():
+                    pattern = re.compile(r'<h2 class="title-text">(.*?)</h2>')
+                    self.article_name = pattern.search(html).group(1)
+                elif 'user' in res.groupdict():
+                    pattern = re.compile(r'<h3 class="uc-hero-name">(.*?)</h3>')
+                    self.user_name = pattern.search(html).group(1)
+
+    def format(self):
+
+        title = self.site
+
+        if self.article_name:
+            title = self.article_name
+        elif self.user_name:
+            title = self.user_name
+
+        return title
+                

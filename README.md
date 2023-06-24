@@ -26,11 +26,11 @@ pip install miuc
 
 in Vscode, press <kbd>ctrl</kbd> + <kbd>v</kbd> to paste as usual, miuc will complete the title if URL in your clipboard
 
-in command line, use `miuc <url>` and return the markdown format url with title, you may need this one if you prefer vim/neovim and so on
+in command line, use `miuc <URL>` and return the markdown format url with title, you may need this one if you prefer vim/neovim and so on
 
 ```bash
-$ miuc <url>
-[title](url)
+$ miuc <URL>
+[miuc](URL)
 
 # for example
 $ miuc https://github.com/luzhixing12345/miuc

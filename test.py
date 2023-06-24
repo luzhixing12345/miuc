@@ -24,6 +24,8 @@ class MiucUnitTest(unittest.TestCase):
             "https://github.com/microsoft/vscode/network/dependencies",
             "https://github.com/microsoft/vscode/commits/main",
             "https://github.com/microsoft/vscode/commit/a5727468f373af49f785a94e13e7a2890a1097af",
+            "https://github.com/search?q=fcitx5+theme&type=Repositories",
+            "https://github.com/search?q=linux+language%3AMarkdown&type=code&l=Markdown"
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -118,6 +120,10 @@ class MiucUnitTest(unittest.TestCase):
             "http://t.csdn.cn/6eAx0",
             "https://blog.csdn.net/qq_46675545/category_12120503.html",
             "https://blog.csdn.net/qq_45726331/category_12220993.html",
+            "https://blog.csdn.net/weixin_38493195/article/details/126981220?spm=1001.2014.3001.5502",
+            "https://blog.csdn.net/weixin_38493195/article/details/127588073?spm=1001.2014.3001.5502",
+            "https://blog.csdn.net/weixin_38493195/article/details/128329873?spm=1001.2014.3001.5502",
+            "https://blog.csdn.net/weixin_38493195/article/details/124870781"
         ]
 
         for url in urls:
@@ -146,6 +152,29 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_jianshu(self):
+
+        urls = [
+            "https://www.jianshu.com",
+            "https://www.jianshu.com/p/b2288ef3f11e",
+            "https://www.jianshu.com/u/441d207955f2",
+            "https://www.jianshu.com/u/c0df9f7c15fa",
+            "https://www.jianshu.com/p/b9552bcd27be"
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
+
+    def test_tencentcloud(self):
+
+        urls = [
+            "https://cloud.tencent.com/",
+            "https://cloud.tencent.com/developer/user/7055715",
+            'https://cloud.tencent.com/developer/article/1679861'
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
+
+
     def test_others(self):
         urls = [
             "https://www.vmware.com/products/workstation-pro.html",
@@ -153,10 +182,14 @@ class MiucUnitTest(unittest.TestCase):
             "https://chat.openai.com/chat",
             "https://vaaandark.top/posts/cpu-%E6%B5%81%E6%B0%B4%E7%BA%BF/",
             "https://docs.python.org/zh-cn/3/library/urllib.parse.html",
-            "https://about.codecov.io/"
+            "https://about.codecov.io/",
+            "https://v2raya.org/docs/prologue/introduction/",
+            "http://localhost:2017/",
+            "http://192.168.1.1:2017/"
         ]
         for url in urls:
             print(miuc.parse_url(url))
+
 
 
 if __name__ == "__main__":
