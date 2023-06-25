@@ -137,7 +137,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://www.cnblogs.com/deali/p/17501704.html"
             "https://www.cnblogs.com/guanghe/p/11975387.html",
             "https://www.cnblogs.com/zhiyiYo/p/17492487.html",
-            "https://www.cnblogs.com/pythonista/p/17501383.html"
+            "https://www.cnblogs.com/pythonista/p/17501383.html",
             "https://www.cnblogs.com/zhiyiYo",
             "https://www.cnblogs.com/"
         ]
@@ -174,6 +174,16 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_douban(self):
+
+        urls = [
+            "https://book.douban.com/",
+            "https://book.douban.com/subject/2334288/",
+            "https://book.douban.com/subject/35966120/?source=2022_annual_book"
+        ]
+
+        for url in urls:
+            print(miuc.parse_url(url))
 
     def test_others(self):
         urls = [

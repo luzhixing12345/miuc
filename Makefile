@@ -7,7 +7,7 @@ test:
 	@python -m miuc.main $(url)
 
 cover:
-	coverage run coverage_test.py
+	coverage run test.py
 	coverage html
 
 build:

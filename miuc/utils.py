@@ -16,7 +16,7 @@ def guess_name_by_url(url):
     # set url title based on netloc
     if len(url_netlocs) <= 1:
         # only top level domain or localhost, maybe never happend
-        url_title = url
+        url_title = url # pragma: no cover
     elif len(url_netlocs) == 2:
         # remove top level domain, insert empty str
         url_title = url_netlocs[0]

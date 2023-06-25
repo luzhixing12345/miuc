@@ -19,7 +19,8 @@ from .site_processor import (
     Githubusercontent,
     CNblog,
     Jianshu,
-    TecentCloud
+    TecentCloud,
+    Douban
 )
 from .utils import guess_name_by_url
 from urllib.parse import unquote
@@ -41,7 +42,8 @@ SPECIFIC_SITES = {
     r"^https://raw\.githubusercontent\.com.*": Githubusercontent,
     r"^https://www\.cnblogs\.com.*": CNblog,
     r"^https://www\.jianshu\.com.*": Jianshu,
-    r"^https://cloud\.tencent\.com.*": TecentCloud
+    r"^https://cloud\.tencent\.com.*": TecentCloud,
+    r"^https://book\.douban\.com.*": Douban
 }
 
 
@@ -63,11 +65,11 @@ def parse_url(url: str, max_time_limit: int = 5) -> str:
             # return guess_name_by_url(url)
         # print('ok')
         return guess_name_by_url(url)
-    except Exception as e:
+    except Exception as e: # pragma: no cover
         return guess_name_by_url(url)
 
 
-def parse_html(html: str) -> str:
+def parse_html(html: str) -> str: # pragma: no cover
     """
     parse html and return the title
     """
