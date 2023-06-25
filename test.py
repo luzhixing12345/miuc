@@ -73,6 +73,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://www.youtube.com/watch?v=iTZ1-85I77c&list=PL4cUxeGkcC9gUgr39Q_yD6v-bSyMwKPUI&index=2",
             "https://youtu.be/iTZ1-85I77c",
             "https://www.youtube.com/@programmingwithmosh/videos",
+            "https://www.youtube.com/playlist?list=PLyzOVJj3bHQuloKGG59rS43e29ro7I57J"
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -107,6 +108,8 @@ class MiucUnitTest(unittest.TestCase):
             "https://www.bilibili.com/read/cv23285665?spm_id_from=333.999.0.0",
             "https://www.bilibili.com/video/BV1J14y1D7Sw/?spm_id_from=333.999.list.card_archive.click&vd_source=7b4c585df2dd3777eae63bf4867f6c11",
             "https://www.bilibili.com/video/BV13V4y1y73X/?spm_id_from=444.41.list.card_archive.click&vd_source=7b4c585df2dd3777eae63bf4867f6c11",
+            "https://space.bilibili.com/1010983811?spm_id_from=333.337.search-card.all.click",
+            "https://space.bilibili.com/261543088?spm_id_from=333.999.0.0"
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -196,7 +199,9 @@ class MiucUnitTest(unittest.TestCase):
             "https://about.codecov.io/",
             "https://v2raya.org/docs/prologue/introduction/",
             "http://localhost:2017/",
-            "http://192.168.1.1:2017/"
+            "http://192.168.1.1:2017/",
+            "https://csdiy.wiki/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/MITmaths/",
+            "https://wallesspku.space/"
         ]
         for url in urls:
             print(miuc.parse_url(url))

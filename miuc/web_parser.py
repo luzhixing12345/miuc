@@ -37,6 +37,7 @@ SPECIFIC_SITES = {
     r"^https://zhuanlan\.zhihu\.com.*": Zhihu,
     r"^https://www\.zhihu\.com.*": Zhihu,
     r"^https://www\.bilibili\.com.*": Bilibili,
+    r"^https://space\.bilibili\.com/.*": Bilibili,
     r"^https://blog\.csdn\.net.*": CSDN,
     r"^http://t\.csdn\.cn/.*": CSDN,
     r"^https://raw\.githubusercontent\.com.*": Githubusercontent,

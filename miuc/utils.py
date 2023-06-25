@@ -31,13 +31,11 @@ def guess_name_by_url(url):
     # print(netlocs)
 
     url_path = url_info.path
-    if url_path != "" and url_path != "/":
-        if url_path[0] == "/":
-            url_path = url_path[1:]
-        if url_path[-1] == "/":
-            url_path = url_path[:-1]
-
-    url_paths = url_path.split("/")
+    _url_paths = url_path.split("/")
+    url_paths = []
+    for u_p in _url_paths:
+        if u_p != '':
+            url_paths.append(u_p)
     # print(url_paths)
 
     path_keywords = [
@@ -50,14 +48,15 @@ def guess_name_by_url(url):
         "releases",
         "library",
     ]
+
     for path in url_paths:
-        if path in path_keywords:
+        if path in path_keywords or len(url_netlocs) == 2:
             # last path may be the most important path
             important_path = url_paths[-1]
             if important_path.endswith(".html"):
                 important_path = important_path.replace(".html", "")
 
-            ignore_path_titles = ["introduction"]
+            ignore_path_titles = ["introduction",'index']
             if important_path not in ignore_path_titles:
                 url_title += f" {important_path}"
             break

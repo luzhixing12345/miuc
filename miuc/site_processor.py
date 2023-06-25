@@ -160,6 +160,8 @@ class Github(Processor):
             self.branch_name = res.group("branch")
         if "file" in res.groupdict():
             self.file_name = res.group("file").split("/")[-1]
+            # remove README.md -> README
+            self.file_name = self.file_name.split('.')[0]
         if "tab" in res.groupdict():
             self.tab_name = res.group("tab")
         if "search" in res.groupdict():
@@ -309,6 +311,7 @@ class Youtube(Processor):
             r"^https://www\.youtube\.com/\@(?P<user>.*?)/.*$",
             r"^https://www\.youtube\.com/watch\?v=(?P<id>.*?)/?$",
             r"^https://youtu\.be/(?P<id>.*?)/?",
+            r"^https://www\.youtube\.com/playlist\?list=(?P<list>.*?)"
         ]
 
         # https://www.youtube.com/watch?v=ErV-2tlf9Ls
@@ -327,6 +330,8 @@ class Youtube(Processor):
         if "user" in res.groupdict():
             self.user_name = res.group("user")
         if "id" in res.groupdict():
+            self.video_name = self._get_youtube_title()
+        if "list" in res.groupdict():
             self.video_name = self._get_youtube_title()
 
     def format(self):
@@ -424,7 +429,6 @@ class Bilibili(Processor):
         super().__init__(max_time_limit)
         self.site = "bilibli"
         self.type_name = None
-        self.user_name = None
         self.id = None
         self.name = None
 
@@ -432,6 +436,7 @@ class Bilibili(Processor):
             r"(?P<site>^https://www\.bilibili\.com)/?$",
             r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*?)\?.*$",
             r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*)$",
+            r"^https://(?P<type>space)\.bilibili\.com/(?P<id>.*?)(\?.*)?/?$"
         ]
 
         # https://www.bilibili.com/video/BV1ah4y1X73M
@@ -441,11 +446,15 @@ class Bilibili(Processor):
     def parse(self, res: Match) -> str:
         if "site" in res.groupdict():
             return
+        
         self.type_name = res.group("type")
         self.id = res.group("id")
         # bilibili url often following with "spm_id_from=333.999.0.0 ..."
         # clean the url
-        self.url = f"https://www.bilibili.com/{self.type_name}/{self.id}"
+        if self.type_name != 'space':
+            self.url = f"https://www.bilibili.com/{self.type_name}/{self.id}"
+        else:
+            self.url = f"https://space.bilibili.com/{self.id}"
 
         if self.type_name == "video":
             pattern = r"<h1 .*>(.*?)</h1>"
@@ -455,13 +464,18 @@ class Bilibili(Processor):
         elif self.type_name == "read":
             pattern = r'<title data-vue-meta="true">(.*?)</title>'
             self.name = self.get_element_match(pattern).replace(" - 哔哩哔哩", "")
+        elif self.type_name == 'space':            
+            pattern = r'<title>(.*?)的个人空间.*</title>'
+            self.name = self.get_element_match(pattern)
+
+            
 
     def format(self):
         if self.type_name is None:
             # pure bilibili
             title = self.site
         else:
-            if self.type_name == "video":
+            if self.type_name == "video" or self.type_name == 'space':
                 title = self.name
             elif self.type_name == "opus":
                 title = f"B站动态"
