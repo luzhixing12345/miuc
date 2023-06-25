@@ -3,11 +3,6 @@
 import * as vscode from "vscode";
 import * as child_process from 'child_process';
 import { spawn } from 'child_process';
-import * as iconv from 'iconv-lite';
-import * as python from './common/python';
-
-
-let pythonPath: string = "";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -52,16 +47,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 async function checkMiucEnvironment() {
 
-    const pythonInterpreterDetails = await python.getInterpreterDetails(vscode.Uri.file(''));
-
-    if (!pythonInterpreterDetails.path) {
-        return;
-    }
-    // get the first python interpreter
-    const pythonInterpreterPath = pythonInterpreterDetails.path[0];
-    console.log('activate python interpreter path is ' + pythonInterpreterPath);
-    const isMiuCInstalled = await isPackageInstalled(pythonInterpreterPath, 'miuc');
-
+    // use global python interpreter to install miuc
+    const isMiuCInstalled = await isPackageInstalled('miuc');
+    // console.log(isMiuCInstalled);
     if (!isMiuCInstalled) {
         // install miuc if not installed in current python environment
         const installMiuC = await vscode.window.showInformationMessage(
@@ -70,12 +58,11 @@ async function checkMiucEnvironment() {
         );
 
         if (installMiuC === 'Yes') {
-            await installPackage(pythonInterpreterPath, 'miuc');
+            await installPackage('miuc');
         }
     } else {
-        // console.log("miuc is installed");
+        console.log("miuc is installed");
     }
-    pythonPath = pythonInterpreterPath;
 }
 
 
@@ -85,9 +72,9 @@ function getUrlTitle() {
     clipboardTextPromise.then(text => {
         if (isWebUrl(text)) {
             // call miuc
-            const command = `${pythonPath} -m miuc.main ${text}`;
+            const command = `miuc ${text}`;
             // const command = `miuc ${text}`;
-            child_process.exec(command, { encoding: 'buffer' }, (error, stdout) => {
+            child_process.exec(command, (error, stdout) => {
                 if (error) {
                     // console.error(`miuc error：${error.message}`);
                     insertText(`[unknown](${text})`, true);
@@ -95,7 +82,7 @@ function getUrlTitle() {
                 }
 
                 // get result [title](url) from miuc, use utf8 format
-                const result = iconv.decode(stdout, 'utf8').trim();
+                const result = stdout.trim();
                 // insert
                 insertText(result, true);
 
@@ -128,20 +115,19 @@ function isWebUrl(str: string): boolean {
 }
 
 
-async function isPackageInstalled(pythonPath: string, packageName: string): Promise<boolean> {
-
+async function isPackageInstalled(packageName: string): Promise<boolean> {
     // check by pip show
     return new Promise<boolean>((resolve) => {
-        const process = spawn(pythonPath, ['-m', 'pip', 'show', packageName]);
+        const process = spawn('pip',['show',packageName]);
         process.on('close', (code) => {
             resolve(code === 0);
         });
     });
 }
 
-async function installPackage(pythonPath: string, packageName: string): Promise<void> {
+async function installPackage(packageName: string): Promise<void> {
     const terminal = vscode.window.createTerminal({ name: 'Package Installation' });
-    terminal.sendText(`${pythonPath} -m pip install ${packageName}`);
+    terminal.sendText(`pip install ${packageName}`);
 }
 
 

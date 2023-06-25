@@ -30,7 +30,6 @@ in command line, use `miuc <URL>` and return the markdown format url with title,
 
 ```bash
 $ miuc <URL>
-[miuc](URL)
 
 # for example
 $ miuc https://github.com/luzhixing12345/miuc

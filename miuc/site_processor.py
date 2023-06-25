@@ -29,7 +29,7 @@ class Processor:
         self.url = None
         self.max_time_limit = max_time_limit
         self.urls_re = [
-            # re.compile(...)
+            # ...
         ]
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
@@ -40,10 +40,10 @@ class Processor:
 
     def __call__(self, url: str):
         self.url: str = url
-        if len(self.urls_re) == 0: # pragma: no cover
+        if len(self.urls_re) == 0:  # pragma: no cover
             self.error("finish urls_re in your processor class")
         for url_re in self.urls_re:
-            res = url_re.match(self.url)
+            res = re.compile(url_re).match(self.url)
             if res:
                 self.parse(res)
                 break
@@ -88,7 +88,8 @@ class Processor:
 
     def get_element_match(self, pattern: re.Pattern):
         html = self.get_html()
-        return pattern.search(html).group(1)
+        # self._debug(html)
+        return re.compile(pattern).search(html).group(1)
 
     def _debug(self, html):  # pragma: no cover
         """
@@ -116,32 +117,18 @@ class Github(Processor):
         self.search_name = None
 
         self.urls_re = [
-            re.compile(r"^https://github\.com/?$"),
-            re.compile(r"^https://github\.com/(?P<user>[^/]*?)\?tab=(?P<tab>.*?)/?$"),
-            re.compile(r"^https://github\.com/(?P<user>[^/\?]*?)$/?"),
-            re.compile(r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/?$"),
-            re.compile(
-                r"^https://github.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/blob/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$"
-            ),
-            re.compile(
-                r"^https://github.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/files/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$"
-            ),
-            re.compile(
-                r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/tree/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$"
-            ),
-            re.compile(
-                r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/commits?/(?P<commit>.*)$"
-            ),
-            re.compile(
-                r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/\?]*?)/?$"
-            ),
-            re.compile(
-                r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)\?.*$"
-            ),
-            re.compile(
-                r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)/(?P<routine>.*?)(?:#.*)?$"
-            ),
-            re.compile(r"^https://github\.com/search\?q=(?P<search>.*?)((&.*)|(:.*))?/?$"),
+            r"^https://github\.com/?$",
+            r"^https://github\.com/(?P<user>[^/]*?)\?tab=(?P<tab>.*?)/?$",
+            r"^https://github\.com/(?P<user>[^/\?]*?)$/?",
+            r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/?$",
+            r"^https://github.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/blob/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$",
+            r"^https://github.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/files/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$",
+            r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/tree/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$",
+            r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/commits?/(?P<commit>.*)$",
+            r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/\?]*?)/?$",
+            r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)\?.*$",
+            r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/]*?)/(?P<routine>.*?)(?:#.*)?$",
+            r"^https://github\.com/search\?q=(?P<search>.*?)((&.*)|(:.*))?/?$",
         ]
 
         # "https://github.com/{user}"
@@ -165,7 +152,7 @@ class Github(Processor):
                 has_id = self.routine.split("/")[0].isdigit()
                 if has_id:
                     # for issue and pull
-                    pattern = re.compile(r'<bdi class="js-issue-title markdown-title">(.*?)</bdi>')
+                    pattern = r'<bdi class="js-issue-title markdown-title">(.*?)</bdi>'
                     self.repo_function_name = self.get_element_match(pattern)
                 else:
                     self.repo_function_name = self.routine.split("/")[-1]
@@ -212,9 +199,9 @@ class Githubio(Processor):
         self.routine = None
 
         self.urls_re = [
-            re.compile(r"^https://(?P<user>.*?)\.github\.io/?$"),  # blog / resume
-            re.compile(r"^https://(?P<user>.*?)\.github\.io/(?P<repo>.*?)/(?P<routine>.+?)/?$"),
-            re.compile(r"^https://(?P<user>.*?)\.github\.io/(?P<repo>.*?)/?$"),  # github repo
+            r"^https://(?P<user>.*?)\.github\.io/?$",  # blog / resume
+            r"^https://(?P<user>.*?)\.github\.io/(?P<repo>.*?)/(?P<routine>.+?)/?$",
+            r"^https://(?P<user>.*?)\.github\.io/(?P<repo>.*?)/?$",  # github repo
         ]
 
     def parse(self, res: Match) -> str:
@@ -251,11 +238,9 @@ class Stackoverflow(Processor):
         self.is_answer = False
 
         self.urls_re = [
-            re.compile(r"^https://stackoverflow\.com/?$"),
-            re.compile(r"^https://stackoverflow\.com/(?P<type>[^/]*?)/tagged/(?P<tag>.*?)/?$"),
-            re.compile(
-                r"^https://stackoverflow\.com/(?P<type>[^/]*?)/(?P<id>[^/]*?)/(?P<question>.*?)/?$"
-            ),
+            r"^https://stackoverflow\.com/?$",
+            r"^https://stackoverflow\.com/(?P<type>[^/]*?)/tagged/(?P<tag>.*?)/?$",
+            r"^https://stackoverflow\.com/(?P<type>[^/]*?)/(?P<id>[^/]*?)/(?P<question>.*?)/?$",
         ]
 
         # https://stackoverflow.com/questions/tagged/python
@@ -279,13 +264,13 @@ class Stackoverflow(Processor):
 
             if self.question_name is None or self.question_name.isdigit():
                 # could not get question name from url
-                pattern = re.compile(r'<a .*class="question-hyperlink">(.*?)</a>')
+                pattern = r'<a .*class="question-hyperlink">(.*?)</a>'
                 self.question_name = self.get_element_match(pattern)
         elif self.type_name == "a":
             # answer
             # https://stackoverflow.com/a/601989/17869889
 
-            pattern = re.compile(r'<a .*class="question-hyperlink">(.*?)</a>')
+            pattern = r'<a .*class="question-hyperlink">(.*?)</a>'
             self.question_name = self.get_element_match(pattern)
             self.is_answer = True
         elif self.type_name == "users":
@@ -319,11 +304,11 @@ class Youtube(Processor):
         self.user_name = None
         self.video_name = None
         self.urls_re = [
-            re.compile(r"^https://www\.youtube\.com/?$"),
-            re.compile(r"^https://www\.youtube\.com/\@(?P<user>.*?)/?$"),
-            re.compile(r"^https://www\.youtube\.com/\@(?P<user>.*?)/.*$"),
-            re.compile(r"^https://www\.youtube\.com/watch\?v=(?P<id>.*?)/?$"),
-            re.compile(r"^https://youtu\.be/(?P<id>.*?)/?"),
+            r"^https://www\.youtube\.com/?$",
+            r"^https://www\.youtube\.com/\@(?P<user>.*?)/?$",
+            r"^https://www\.youtube\.com/\@(?P<user>.*?)/.*$",
+            r"^https://www\.youtube\.com/watch\?v=(?P<id>.*?)/?$",
+            r"^https://youtu\.be/(?P<id>.*?)/?",
         ]
 
         # https://www.youtube.com/watch?v=ErV-2tlf9Ls
@@ -365,11 +350,11 @@ class Zhihu(Processor):
         self.title = None
 
         self.urls_re = [
-            re.compile(r"(?P<site>^https://www\.zhihu\.com)/?$"),
-            re.compile(r"^https://www\.zhihu\.com/question/\d+/(?P<type>.*?)/(?P<id>.*?)/?$"),
-            re.compile(r"^https://www\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/(?P<sub_type>.*?)/?$"),
-            re.compile(r"^https://www\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$"),
-            re.compile(r"^https://zhuanlan\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$"),
+            r"(?P<site>^https://www\.zhihu\.com)/?$",
+            r"^https://www\.zhihu\.com/question/\d+/(?P<type>.*?)/(?P<id>.*?)/?$",
+            r"^https://www\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/(?P<sub_type>.*?)/?$",
+            r"^https://www\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$",
+            r"^https://zhuanlan\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$",
         ]
 
         self.sub_types = {
@@ -400,21 +385,21 @@ class Zhihu(Processor):
 
         if self.type_name == "question":
             # https://www.zhihu.com/question/446988424
-            pattern = re.compile(r'<h1 class="QuestionHeader-title">(.*?)</h1>')
+            pattern = r'<h1 class="QuestionHeader-title">(.*?)</h1>'
             self.title = self.get_element_match(pattern)
         elif self.type_name == "p":
             # https://zhuanlan.zhihu.com/p/347552573
-            pattern = re.compile(r'<h1 class="Post-Title">(.*?)</h1>')
+            pattern = r'<h1 class="Post-Title">(.*?)</h1>'
             self.title = self.get_element_match(pattern)
         elif self.type_name == "answer":
             # https://www.zhihu.com/question/21099081/answer/119347251
             # https://www.zhihu.com/question/367357782/answer/3066947505 Anonymous user
-            pattern = re.compile(r'<h1 class="QuestionHeader-title">(.*?)</h1>')
+            pattern = r'<h1 class="QuestionHeader-title">(.*?)</h1>'
             self.title = self.get_element_match(pattern) + "的回答"
         elif self.type_name == "people":
             # https://www.zhihu.com/people/hinus
 
-            pattern = re.compile(r'<span class="ProfileHeader-name">(.*?)</span')
+            pattern = r'<span class="ProfileHeader-name">(.*?)</span'
             # sometimes there will be <style ...> inside, remove it
             user_name = re.sub(r"<style.*>", "", self.get_element_match(pattern))
             self.title = user_name + "的主页"
@@ -423,11 +408,11 @@ class Zhihu(Processor):
                 self.title = f'{user_name}的{self.sub_types[res.group("sub_type")]}'
         elif self.type_name == "collection":
             # https://www.zhihu.com/collection/86788003
-            pattern = re.compile(r'<div class="CollectionDetailPageHeader-title">(.*?)</div>')
+            pattern = r'<div class="CollectionDetailPageHeader-title">(.*?)</div>'
             self.title = self.get_element_match(pattern) + " 收藏夹"
         elif self.type_name == "column":
             # https://www.zhihu.com/column/hinus
-            pattern = re.compile(r'<div class="css-zyehvu">(.*?)</div>')
+            pattern = r'<div class="css-zyehvu">(.*?)</div>'
             self.title = self.get_element_match(pattern) + " 专栏"
 
     def format(self):
@@ -444,9 +429,9 @@ class Bilibili(Processor):
         self.name = None
 
         self.urls_re = [
-            re.compile(r"(?P<site>^https://www\.bilibili\.com)/?$"),
-            re.compile(r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*?)\?.*$"),
-            re.compile(r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*)$"),
+            r"(?P<site>^https://www\.bilibili\.com)/?$",
+            r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*?)\?.*$",
+            r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*)$",
         ]
 
         # https://www.bilibili.com/video/BV1ah4y1X73M
@@ -463,12 +448,12 @@ class Bilibili(Processor):
         self.url = f"https://www.bilibili.com/{self.type_name}/{self.id}"
 
         if self.type_name == "video":
-            pattern = re.compile(r"<h1 .*>(.*?)</h1>")
+            pattern = r"<h1 .*>(.*?)</h1>"
             self.name = self.get_element_match(pattern)
         elif self.type_name == "opus":
             pass
         elif self.type_name == "read":
-            pattern = re.compile(r'<title data-vue-meta="true">(.*?)</title>')
+            pattern = r'<title data-vue-meta="true">(.*?)</title>'
             self.name = self.get_element_match(pattern).replace(" - 哔哩哔哩", "")
 
     def format(self):
@@ -498,16 +483,12 @@ class CSDN(Processor):
         self.article_name = None
 
         self.urls_re = [
-            re.compile(r"(?P<site>^https://blog\.csdn\.net)/?$"),
-            re.compile(r"^https://blog\.csdn\.net/(?P<user_id>.*?)/(?P<category>.*?)\.html$"),
-            re.compile(r"^https://blog\.csdn\.net/(?P<user_id>.*?)\?type=.*$"),
-            re.compile(
-                r"^https://blog\.csdn\.net/(?P<user_id>.*?)/article/details/(?P<article_id>.*?)\?.*$"
-            ),
-            re.compile(
-                r"^https://blog\.csdn\.net/(?P<user_id>.*?)/article/details/(?P<article_id>.*?)$"
-            ),
-            re.compile(r"^http://t\.csdn\.cn/(?P<short_id>.*?)$"),
+            r"(?P<site>^https://blog\.csdn\.net)/?$",
+            r"^https://blog\.csdn\.net/(?P<user_id>.*?)/(?P<category>.*?)\.html$",
+            r"^https://blog\.csdn\.net/(?P<user_id>.*?)\?type=.*$",
+            r"^https://blog\.csdn\.net/(?P<user_id>.*?)/article/details/(?P<article_id>.*?)\?.*$",
+            r"^https://blog\.csdn\.net/(?P<user_id>.*?)/article/details/(?P<article_id>.*?)$",
+            r"^http://t\.csdn\.cn/(?P<short_id>.*?)$",
         ]
 
     def parse(self, res: Match) -> str:
@@ -521,19 +502,19 @@ class CSDN(Processor):
             self.article_id = res.group("article_id")
             # clean the url
             self.url = f"https://blog.csdn.net/{self.user_id}/article/details/{self.article_id}"
-            pattern = re.compile(r'<h1 class="title-article" id="articleContentId">(.*?)</h1>')
+            pattern = r'<h1 class="title-article" id="articleContentId">(.*?)</h1>'
             self.article_name = self.get_element_match(pattern)
         elif "category" in res.groupdict():
-            pattern = re.compile(r'<h3 class="column_title oneline" title=.*>(.*?)</h3>')
+            pattern = r'<h3 class="column_title oneline" title=.*>(.*?)</h3>'
             self.article_name = self.get_element_match(pattern)
         elif "short_id" in res.groupdict():
             # for short url
 
-            pattern = re.compile(r'<meta name="keywords" content="(.*?)">')
+            pattern = r'<meta name="keywords" content="(.*?)">'
             self.article_name = self.get_element_match(pattern)
         else:
             # for user home page
-            pattern = re.compile(r'data-nickname="(.*?)"')
+            pattern = r'data-nickname="(.*?)"'
             self.user_name = self.get_element_match(pattern)
 
     def format(self) -> str:
@@ -551,7 +532,7 @@ class Githubusercontent(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
 
-        self.urls_re = [re.compile(r"^https://raw\.githubusercontent\.com.*$")]
+        self.urls_re = [r"^https://raw\.githubusercontent\.com.*$"]
 
     def parse(self, res: Match) -> str:
         return
@@ -568,27 +549,31 @@ class CNblog(Processor):
         self.article_name = None
 
         self.urls_re = [
-            re.compile(r"(?P<site>^https://www\.cnblogs\.com)/?$"),
-            re.compile(r"^https://www\.cnblogs\.com/(?P<author>.*?)/p/(?P<article>.*?)/?$"),
-            re.compile(r"^https://www\.cnblogs\.com/(?P<author>.*?)/?$"),
+            r"(?P<site>^https://www\.cnblogs\.com)/?$",
+            r"^https://www\.cnblogs\.com/(?P<author>.*?)/p/(?P<article>.*?)/?$",
+            r"^https://www\.cnblogs\.com/(?P<archive>.*?)/archive/.*$",
+            r"^https://www\.cnblogs\.com/(?P<author>.*?)/?$",
         ]
 
     def parse(self, res: Match) -> str:
         if "site" in res.groupdict():
             return
-        self.author_name = res.group("author")
 
         if "article" in res.groupdict():
-            pattern = re.compile(r'<span role="heading" aria-level="2">(.*?)</span>')
+            pattern = r'<span role="heading" aria-level="2">(.*?)</span>'
             self.article_name = self.get_element_match(pattern)
-        else:
+        elif "archive" in res.groupdict():
+            pattern = r'<span role="heading" aria-level="2">(.*?)</span>'
+            self.article_name = self.get_element_match(pattern)
+        elif "author" in res.groupdict():
+            # only author
             pattern = re.compile(
                 r'<a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/.*">(.*?)</a>'
             )
             self.author_name = self.get_element_match(pattern)
 
     def format(self):
-        if self.author_name is None:
+        if self.author_name is None and self.article_name is None:
             title = self.site
         else:
             if self.article_name:
@@ -607,9 +592,9 @@ class Jianshu(Processor):
         self.user_name = None
 
         self.urls_re = [
-            re.compile(r"(?P<site>^https://www\.jianshu\.com)/?$"),
-            re.compile(r"^https://www\.jianshu\.com/p/(?P<article>.*?)/?$"),
-            re.compile(r"^https://www\.jianshu\.com/u/(?P<user>.*?)/?$"),
+            r"(?P<site>^https://www\.jianshu\.com)/?$",
+            r"^https://www\.jianshu\.com/p/(?P<article>.*?)/?$",
+            r"^https://www\.jianshu\.com/u/(?P<user>.*?)/?$",
         ]
 
     def parse(self, res: Match) -> str:
@@ -617,10 +602,10 @@ class Jianshu(Processor):
             return
 
         if "article" in res.groupdict():
-            pattern = re.compile(r'<h1 class="_1RuRku">(.*?)</h1>')
+            pattern = r'<h1 class="_1RuRku">(.*?)</h1>'
             self.article_name = self.get_element_match(pattern)
         if "user" in res.groupdict():
-            pattern = re.compile(r'<a class="name" href=.*?>(.*?)</a>')
+            pattern = r'<a class="name" href=.*?>(.*?)</a>'
             self.user_name = self.get_element_match(pattern)
 
     def format(self):
@@ -640,9 +625,9 @@ class TecentCloud(Processor):
         self.user_name = None
 
         self.urls_re = [
-            re.compile(r"(?P<site>^https://cloud.tencent.com)/?$"),
-            re.compile(r"^https://cloud.tencent.com/developer/article/(?P<article>.*?)/?$"),
-            re.compile(r"^https://cloud.tencent.com/developer/user/(?P<user>.*?)/?$"),
+            r"(?P<site>^https://cloud.tencent.com)/?$",
+            r"^https://cloud.tencent.com/developer/article/(?P<article>.*?)/?$",
+            r"^https://cloud.tencent.com/developer/user/(?P<user>.*?)/?$",
         ]
 
     def parse(self, res: Match) -> str:
@@ -650,10 +635,10 @@ class TecentCloud(Processor):
             return
 
         if "article" in res.groupdict():
-            pattern = re.compile(r'<h2 class="title-text">(.*?)</h2>')
+            pattern = r'<h2 class="title-text">(.*?)</h2>'
             self.article_name = self.get_element_match(pattern)
         elif "user" in res.groupdict():
-            pattern = re.compile(r'<h3 class="uc-hero-name">(.*?)</h3>')
+            pattern = r'<h3 class="uc-hero-name">(.*?)</h3>'
             self.user_name = self.get_element_match(pattern)
 
     def format(self):
@@ -674,15 +659,15 @@ class Douban(Processor):
         self.book_name = None
 
         self.urls_re = [
-            re.compile(r"(?P<site>https://book\.douban\.com)/?$"),
-            re.compile(r"^https://book\.douban\.com/subject/(?P<id>.*?)(\?.*)?/?$"),
+            r"(?P<site>https://book\.douban\.com)/?$",
+            r"^https://book\.douban\.com/subject/(?P<id>.*?)(\?.*)?/?$",
         ]
 
     def parse(self, res: Match) -> str:
         if "site" in res.groupdict():
             return
 
-        pattern = re.compile(r'<span property="v:itemreviewed">(.*?)</span>')
+        pattern = r'<span property="v:itemreviewed">(.*?)</span>'
         self.book_name = self.get_element_match(pattern)
 
     def format(self):

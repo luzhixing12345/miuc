@@ -139,7 +139,8 @@ class MiucUnitTest(unittest.TestCase):
             "https://www.cnblogs.com/zhiyiYo/p/17492487.html",
             "https://www.cnblogs.com/pythonista/p/17501383.html",
             "https://www.cnblogs.com/zhiyiYo",
-            "https://www.cnblogs.com/"
+            "https://www.cnblogs.com/",
+            "https://www.cnblogs.com/armlinux/archive/2010/11/26/2396888.html"
         ]
         for url in urls:
             print(miuc.parse_url(url))
