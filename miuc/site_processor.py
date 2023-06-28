@@ -161,7 +161,7 @@ class Github(Processor):
         if "file" in res.groupdict():
             self.file_name = res.group("file").split("/")[-1]
             # remove README.md -> README
-            self.file_name = self.file_name.split('.')[0]
+            self.file_name = self.file_name.split(".")[0]
         if "tab" in res.groupdict():
             self.tab_name = res.group("tab")
         if "search" in res.groupdict():
@@ -213,6 +213,8 @@ class Githubio(Processor):
             self.repo_name = res.group("repo")
         if "routine" in res.groupdict():
             origin_routine = res.group("routine").split("/")[-1]
+            if origin_routine == "index.html":
+                origin_routine = res.group("routine").split("/")[-2]
             self.routine = origin_routine
 
     def format(self):
@@ -311,7 +313,7 @@ class Youtube(Processor):
             r"^https://www\.youtube\.com/\@(?P<user>.*?)/.*$",
             r"^https://www\.youtube\.com/watch\?v=(?P<id>.*?)/?$",
             r"^https://youtu\.be/(?P<id>.*?)/?",
-            r"^https://www\.youtube\.com/playlist\?list=(?P<list>.*?)"
+            r"^https://www\.youtube\.com/playlist\?list=(?P<list>.*?)",
         ]
 
         # https://www.youtube.com/watch?v=ErV-2tlf9Ls
@@ -375,7 +377,7 @@ class Zhihu(Processor):
 
         # https://zhuanlan.zhihu.com/p/347552573
         # https://www.zhihu.com/question/21099081/answer/18830200
-        # Y不动点组合子用在哪里？ - RednaxelaFX的回答 - 知乎
+        # Y不动点组合子用在哪里? - RednaxelaFX的回答 - 知乎
         #
 
         # https://www.zhihu.com/collection/86788003
@@ -436,7 +438,7 @@ class Bilibili(Processor):
             r"(?P<site>^https://www\.bilibili\.com)/?$",
             r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*?)\?.*$",
             r"^https://www\.bilibili\.com/(?P<type>.*?)/(?P<id>.*)$",
-            r"^https://(?P<type>space)\.bilibili\.com/(?P<id>.*?)(\?.*)?/?$"
+            r"^https://(?P<type>space)\.bilibili\.com/(?P<id>.*?)(\?.*)?/?$",
         ]
 
         # https://www.bilibili.com/video/BV1ah4y1X73M
@@ -446,12 +448,12 @@ class Bilibili(Processor):
     def parse(self, res: Match) -> str:
         if "site" in res.groupdict():
             return
-        
+
         self.type_name = res.group("type")
         self.id = res.group("id")
         # bilibili url often following with "spm_id_from=333.999.0.0 ..."
         # clean the url
-        if self.type_name != 'space':
+        if self.type_name != "space":
             self.url = f"https://www.bilibili.com/{self.type_name}/{self.id}"
         else:
             self.url = f"https://space.bilibili.com/{self.id}"
@@ -464,18 +466,16 @@ class Bilibili(Processor):
         elif self.type_name == "read":
             pattern = r'<title data-vue-meta="true">(.*?)</title>'
             self.name = self.get_element_match(pattern).replace(" - 哔哩哔哩", "")
-        elif self.type_name == 'space':            
-            pattern = r'<title>(.*?)的个人空间.*</title>'
+        elif self.type_name == "space":
+            pattern = r"<title>(.*?)的个人空间.*</title>"
             self.name = self.get_element_match(pattern)
-
-            
 
     def format(self):
         if self.type_name is None:
             # pure bilibili
             title = self.site
         else:
-            if self.type_name == "video" or self.type_name == 'space':
+            if self.type_name == "video" or self.type_name == "space":
                 title = self.name
             elif self.type_name == "opus":
                 title = f"B站动态"

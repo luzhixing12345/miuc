@@ -47,6 +47,8 @@ def guess_name_by_url(url):
         "products",
         "releases",
         "library",
+        "blogs",
+        "blog"
     ]
 
     for path in url_paths:

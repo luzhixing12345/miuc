@@ -39,6 +39,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://luzhixing12345.github.io/tags/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/",
             "https://luzhixing12345.github.io/2023/02/28/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/pws/",
             "https://luzhixing12345.github.io/2023/02/28/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/VMware%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%85%8D%E7%BD%AE/",
+            "https://zhou-yuxin.github.io/articles/2018/Linux物理内存管理_获取物理内存布局、划分内存区与创建NUMA节点/index.html"
         ]
         for url in urls:
             print(miuc.parse_url(url))
