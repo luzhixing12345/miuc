@@ -361,7 +361,7 @@ class Zhihu(Processor):
             r"^https://www\.zhihu\.com/question/\d+/(?P<type>.*?)/(?P<id>.*?)/?$",
             r"^https://www\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/(?P<sub_type>.*?)/?$",
             r"^https://www\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$",
-            r"^https://zhuanlan\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$",
+            r"^https://zhuanlan\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$"
         ]
 
         self.sub_types = {
@@ -690,3 +690,34 @@ class Douban(Processor):
             title = self.book_name
 
         return title
+
+class Juejin(Processor):
+
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = '掘金'
+        self.article_name = None
+
+        self.urls_re = [
+            r'(?P<site>^https://juejin\.cn/?)$',
+            r'^https://juejin\.cn/post/(?P<post_id>.*)/?$'
+        ]
+
+    def parse(self, res: Match) -> str:
+        
+        if 'site' in res.groupdict():
+            return
+        if 'post_id' in res.groupdict():
+            pattern = re.compile(r'<title>(.*?) - 掘金</title>')
+            self.article_name = self.get_element_match(pattern)
+        
+
+    def format(self):
+        
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title
+        
+        

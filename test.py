@@ -190,6 +190,16 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_juejin(self):
+
+        urls = [
+            "https://juejin.cn/post/7134950321595351047",
+            "https://juejin.cn"
+        ]
+
+        for url in urls:
+            print(miuc.parse_url(url))
+
     def test_others(self):
         urls = [
             "https://www.vmware.com/products/workstation-pro.html",
@@ -202,7 +212,10 @@ class MiucUnitTest(unittest.TestCase):
             "http://localhost:2017/",
             "http://192.168.1.1:2017/",
             "https://csdiy.wiki/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/MITmaths/",
-            "https://wallesspku.space/"
+            "https://wallesspku.space/",
+            "https://link.zhihu.com/?target=https%3A//learnopengl.com/",
+            "https://link.zhihu.com/?target=https%3A//github.com/yue/yue",
+            "https://link.zhihu.com/?target=https%3A//github.com/yue/yue/issues/166"
         ]
         for url in urls:
             print(miuc.parse_url(url))
