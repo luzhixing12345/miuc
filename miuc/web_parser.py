@@ -54,7 +54,6 @@ def parse_url(url: str, max_time_limit: int = 5) -> str:
     parse url and return the tite for the page
     """
     url = unquote(url)
-    
     res = re.match(r'^https://link\.zhihu\.com/\?target=(?P<url>.*?)/?$',url)
     if res:
         return parse_url(res.group('url'), max_time_limit)

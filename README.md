@@ -43,3 +43,4 @@ see more information from [miuc document](https://luzhixing12345.github.io/miuc/
 - [brandmark](https://brandmark.io/)
 - [autopep8](https://github.com/microsoft/vscode-autopep8)
 - [icons8](https://icons8.com/icons/set/logo)
+- [VS-Code-Extension-Doc-ZH](https://liiked.github.io/VS-Code-Extension-Doc-ZH/#/)

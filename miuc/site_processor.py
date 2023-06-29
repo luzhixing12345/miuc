@@ -121,8 +121,8 @@ class Github(Processor):
             r"^https://github\.com/(?P<user>[^/]*?)\?tab=(?P<tab>.*?)/?$",
             r"^https://github\.com/(?P<user>[^/\?]*?)$/?",
             r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/?$",
-            r"^https://github.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/blob/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$",
-            r"^https://github.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/files/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$",
+            r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/blob/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$",
+            r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/files/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$",
             r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/tree/(?P<branch>[^/]*?)/?(?P<file>.*?)?/?$",
             r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/commits?/(?P<commit>.*)$",
             r"^https://github\.com/(?P<user>[^/]*?)/(?P<repo>[^/]*?)/(?P<function>[^/\?]*?)/?$",
@@ -213,8 +213,9 @@ class Githubio(Processor):
             self.repo_name = res.group("repo")
         if "routine" in res.groupdict():
             origin_routine = res.group("routine").split("/")[-1]
-            if origin_routine == "index.html":
-                origin_routine = res.group("routine").split("/")[-2]
+            ignore_rountines = ['index.html', 'index.htm','#']
+            if origin_routine in ignore_rountines:
+                origin_routine = self.repo_name
             self.routine = origin_routine
 
     def format(self):

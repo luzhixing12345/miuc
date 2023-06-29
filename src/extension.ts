@@ -10,9 +10,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
     console.log('Congratulations, extension "miuc" is now active!');
 
-    // first check if has python environment and miuc installed
-    await checkMiucEnvironment();
-
     let disposable1 = vscode.commands.registerCommand('miuc.myFunction', getUrlTitle);
     context.subscriptions.push(disposable1);
     // register key map
@@ -43,6 +40,9 @@ export async function activate(context: vscode.ExtensionContext) {
         }
     });
     context.subscriptions.push(disposable2);
+    // register disposable into subscription, and then 
+    // check if has python environment and miuc installed
+    await checkMiucEnvironment();
 }
 
 async function checkMiucEnvironment() {
@@ -76,7 +76,7 @@ function getUrlTitle() {
             // const command = `miuc ${text}`;
             child_process.exec(command, (error, stdout) => {
                 if (error) {
-                    // console.error(`miuc error：${error.message}`);
+                    // console.error(`miuc error:${error.message}`);
                     insertText(`[unknown](${text})`, true);
                     return;
                 }
