@@ -25,7 +25,8 @@ class MiucUnitTest(unittest.TestCase):
             "https://github.com/microsoft/vscode/commits/main",
             "https://github.com/microsoft/vscode/commit/a5727468f373af49f785a94e13e7a2890a1097af",
             "https://github.com/search?q=fcitx5+theme&type=Repositories",
-            "https://github.com/search?q=linux+language%3AMarkdown&type=code&l=Markdown"
+            "https://github.com/search?q=linux+language%3AMarkdown&type=code&l=Markdown",
+            "https://github.com/fool2fish/dragon-book-exercise-answers/blob/master/ch02/2.2/2.2.md"
         ]
         for url in urls:
             print(miuc.parse_url(url))

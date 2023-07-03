@@ -161,7 +161,11 @@ class Github(Processor):
         if "file" in res.groupdict():
             self.file_name = res.group("file").split("/")[-1]
             # remove README.md -> README
-            self.file_name = self.file_name.split(".")[0]
+            ignore_file_exts = ['.md','.txt']
+            for ext in ignore_file_exts:
+                if self.file_name.endswith(ext):
+                    self.file_name = self.file_name[:-len(ext)]
+                    break
         if "tab" in res.groupdict():
             self.tab_name = res.group("tab")
         if "search" in res.groupdict():
