@@ -725,4 +725,25 @@ class Juejin(Processor):
 
         return title
         
+class Wiki(Processor):
+
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = 'wikipedia'
+        self.article_name = None
+
+        self.urls_re = [
+            r'^https://en\.wikipedia\.org/wiki/(?P<name>.*)/?$'
+        ]
+
+    def parse(self, res: Match) -> str:
         
+        self.article_name = res.group('name').replace('_',' ')
+    
+    def format(self):
+
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title

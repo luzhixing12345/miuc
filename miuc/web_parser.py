@@ -20,7 +20,8 @@ from .site_processor import (
     Jianshu,
     TecentCloud,
     Douban,
-    Juejin
+    Juejin,
+    Wiki
 )
 from .utils import guess_name_by_url
 from urllib.parse import unquote
@@ -45,7 +46,8 @@ SPECIFIC_SITES = {
     r"^https://www\.jianshu\.com.*": Jianshu,
     r"^https://cloud\.tencent\.com.*": TecentCloud,
     r"^https://book\.douban\.com.*": Douban,
-    r"^https://juejin\.cn.*": Juejin
+    r"^https://juejin\.cn.*": Juejin,
+    r"^https://en\.wikipedia\.org/wiki/.*":Wiki
 }
 
 

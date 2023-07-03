@@ -221,6 +221,15 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_wiki(self):
+
+        urls = [
+            "https://en.wikipedia.org/wiki/Roman_numerals",
+            "https://en.wikipedia.org/wiki/GCC",
+            "https://en.wikipedia.org/wiki/GNU_Compiler_Collection"
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
 
 
 if __name__ == "__main__":
