@@ -86,10 +86,10 @@ class Processor:
             )  # pragma: no cover
         return response.text
 
-    def get_element_match(self, pattern: re.Pattern):
+    def get_element_match(self, pattern: re.Pattern, flags = 0):
         html = self.get_html()
         # self._debug(html)
-        return re.compile(pattern).search(html).group(1)
+        return re.compile(pattern, flags).search(html).group(1)
 
     def _debug(self, html):  # pragma: no cover
         """
@@ -161,10 +161,10 @@ class Github(Processor):
         if "file" in res.groupdict():
             self.file_name = res.group("file").split("/")[-1]
             # remove README.md -> README
-            ignore_file_exts = ['.md','.txt']
+            ignore_file_exts = [".md", ".txt"]
             for ext in ignore_file_exts:
                 if self.file_name.endswith(ext):
-                    self.file_name = self.file_name[:-len(ext)]
+                    self.file_name = self.file_name[: -len(ext)]
                     break
         if "tab" in res.groupdict():
             self.tab_name = res.group("tab")
@@ -217,7 +217,7 @@ class Githubio(Processor):
             self.repo_name = res.group("repo")
         if "routine" in res.groupdict():
             origin_routine = res.group("routine").split("/")[-1]
-            ignore_rountines = ['index.html', 'index.htm','#']
+            ignore_rountines = ["index.html", "index.htm", "#"]
             if origin_routine in ignore_rountines:
                 origin_routine = self.repo_name
             self.routine = origin_routine
@@ -366,7 +366,7 @@ class Zhihu(Processor):
             r"^https://www\.zhihu\.com/question/\d+/(?P<type>.*?)/(?P<id>.*?)/?$",
             r"^https://www\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/(?P<sub_type>.*?)/?$",
             r"^https://www\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$",
-            r"^https://zhuanlan\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$"
+            r"^https://zhuanlan\.zhihu\.com/(?P<type>.*?)/(?P<id>.*?)/?$",
         ]
 
         self.sub_types = {
@@ -696,54 +696,65 @@ class Douban(Processor):
 
         return title
 
-class Juejin(Processor):
 
+class Juejin(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
-        self.site = '掘金'
+        self.site = "掘金"
         self.article_name = None
 
         self.urls_re = [
-            r'(?P<site>^https://juejin\.cn/?)$',
-            r'^https://juejin\.cn/post/(?P<post_id>.*)/?$'
+            r"(?P<site>^https://juejin\.cn/?)$",
+            r"^https://juejin\.cn/post/(?P<post_id>.*)/?$",
         ]
 
     def parse(self, res: Match) -> str:
-        
-        if 'site' in res.groupdict():
+        if "site" in res.groupdict():
             return
-        if 'post_id' in res.groupdict():
-            pattern = re.compile(r'<title>(.*?) - 掘金</title>')
+        if "post_id" in res.groupdict():
+            pattern = re.compile(r"<title>(.*?) - 掘金</title>")
             self.article_name = self.get_element_match(pattern)
-        
 
     def format(self):
-        
         title = self.site
         if self.article_name:
             title = self.article_name
 
         return title
-        
-class Wiki(Processor):
 
+
+class Wiki(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
-        self.site = 'wikipedia'
+        self.site = "wikipedia"
         self.article_name = None
 
-        self.urls_re = [
-            r'^https://en\.wikipedia\.org/wiki/(?P<name>.*)/?$'
-        ]
+        self.urls_re = [r"^https://en\.wikipedia\.org/wiki/(?P<name>.*)/?$"]
 
     def parse(self, res: Match) -> str:
-        
-        self.article_name = res.group('name').replace('_',' ')
-    
-    def format(self):
+        self.article_name = res.group("name").replace("_", " ")
 
+    def format(self):
         title = self.site
         if self.article_name:
             title = self.article_name
 
+        return title
+
+
+class Weixin(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "微信公众号"
+        self.article_name = None
+        self.urls_re = [r"^https://mp\.weixin\.qq\.com/s/(?P<id>.*?)/?$"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r'<h1 class="rich_media_title " id="activity-name">(.*?)</h1>'
+        self.article_name = self.get_element_match(pattern, re.S).strip()
+
+    def format(self):
+        title = self.site
+        if self.article_name:
+            title = self.article_name
         return title

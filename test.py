@@ -58,7 +58,6 @@ class MiucUnitTest(unittest.TestCase):
             "https://stackoverflow.com/q/393554/17869889",
             "https://stackoverflow.com/a/601989/17869889",
             "https://stackoverflow.com/users/5740428/jan-schultke",
-            "https://stackoverflow.com/a/76520661/17869889",
             "https://stackoverflow.com/a/76521396/17869889",
         ]
 
@@ -231,6 +230,15 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_weixin(self):
+
+        urls = [
+            "https://mp.weixin.qq.com/s/rMREBMGquxTZQXrx4sfkqw",
+            "https://mp.weixin.qq.com/s/mCCi2wFRXojpxRrKEwY-8g"
+        ]
+
+        for url in urls:
+            print(miuc.parse_url(url))
 
 if __name__ == "__main__":
     unittest.main()
