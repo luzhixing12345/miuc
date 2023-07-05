@@ -240,5 +240,14 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_geeksforgeek(self):
+
+        urls = [
+            "https://www.geeksforgeeks.org/cache-coherence-protocols-in-multiprocessor-system/"
+        ]
+        
+        for url in urls:
+            print(miuc.parse_url(url))
+
 if __name__ == "__main__":
     unittest.main()

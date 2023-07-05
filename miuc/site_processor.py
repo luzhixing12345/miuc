@@ -758,3 +758,26 @@ class Weixin(Processor):
         if self.article_name:
             title = self.article_name
         return title
+
+class Geeksforgeeks(Processor):
+
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.article_name = None
+        self.site = "geeksforgeeks"
+
+        self.urls_re = [
+            r"https://www\.geeksforgeeks\.org/(?P<article>.*?)/?$"
+        ]
+
+    def parse(self, res: Match) -> str:
+        
+        self.article_name = res.group('article').replace('-',' ')
+
+    def format(self) -> str:
+        
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title
