@@ -836,3 +836,27 @@ class SourceForge(Processor):
         if self.title:
             title = self.title
         return title
+
+class VscodeExtension(Processor):
+
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "vscode extension"
+        self.author_name = None
+        self.extension_name = None
+
+        self.urls_re = [
+            r"^https://marketplace\.visualstudio\.com/items\?itemName=(?P<author>.*?)\.(?P<extension_name>.*?)/?$"
+        ]
+
+    def parse(self, res: Match) -> str:
+        
+        self.author_name = res.group('author')
+        self.extension_name = res.group('extension_name')
+
+    def format(self) -> str:
+        title = self.site
+        if self.extension_name:
+            title = 'vscode ' + self.extension_name
+        return title
+    

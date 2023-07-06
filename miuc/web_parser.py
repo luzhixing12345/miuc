@@ -24,7 +24,8 @@ from .site_processor import (
     Wiki,
     Weixin,
     Geeksforgeeks,
-    SourceForge
+    SourceForge,
+    VscodeExtension
 )
 from .utils import guess_name_by_url
 from urllib.parse import unquote
@@ -53,7 +54,8 @@ SPECIFIC_SITES = {
     r"^https://en\.wikipedia\.org/wiki/.*":Wiki,
     r"^https://mp.weixin\.qq\.com/s/.*": Weixin,
     r"^https://www\.geeksforgeeks\.org/.*": Geeksforgeeks,
-    r"^https://sourceforge\.net/projects/.*": SourceForge
+    r"^https://sourceforge\.net/projects/.*": SourceForge,
+    r"^https://marketplace\.visualstudio\.com/items\?itemName=.*": VscodeExtension
 }
 
 

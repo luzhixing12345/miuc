@@ -262,5 +262,15 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+
+    def test_vscode_market(self):
+
+        urls = [
+            "https://marketplace.visualstudio.com/items?itemName=AnsonYeung.pascal-language-basics"
+        ]
+
+        for url in urls:
+            print(miuc.parse_url(url))
+
 if __name__ == "__main__":
     unittest.main()
