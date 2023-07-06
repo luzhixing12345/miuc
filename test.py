@@ -215,7 +215,8 @@ class MiucUnitTest(unittest.TestCase):
             "https://wallesspku.space/",
             "https://link.zhihu.com/?target=https%3A//learnopengl.com/",
             "https://link.zhihu.com/?target=https%3A//github.com/yue/yue",
-            "https://link.zhihu.com/?target=https%3A//github.com/yue/yue/issues/166"
+            "https://link.zhihu.com/?target=https%3A//github.com/yue/yue/issues/166",
+            "https://www.shellcodes.org/CommonLisp/CommonLisp%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Common%20Lisp%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83.html"
         ]
         for url in urls:
             print(miuc.parse_url(url))

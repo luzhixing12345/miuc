@@ -36,17 +36,6 @@ $ miuc https://github.com/luzhixing12345/miuc
 [miuc](https://github.com/luzhixing12345/miuc)
 ```
 
-see more information from [miuc document](https://luzhixing12345.github.io/miuc/)
-
-
-
-
-
-
-
-
-
-
 ## Rerference
 
 - [zood document](https://luzhixing12345.github.io/zood/)

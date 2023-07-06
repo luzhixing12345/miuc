@@ -13,6 +13,7 @@ import urllib
 import json
 from .utils import guess_name_by_url
 from re import Match
+from urllib.parse import unquote
 
 
 class Error(Exception):
@@ -220,7 +221,7 @@ class Githubio(Processor):
             ignore_rountines = ["index.html", "index.htm", "#"]
             if origin_routine in ignore_rountines:
                 origin_routine = self.repo_name
-            self.routine = origin_routine
+            self.routine = unquote(origin_routine)
 
     def format(self):
         if self.repo_name is None:

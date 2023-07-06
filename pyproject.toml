@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "miuc"
-version = "0.1.13"
+version = "0.1.14"
 description = "Markdown Intelligence Url Complete"
 authors = ["luzhixing12345 <luzhixing12345@163.com>"]
 license = "MIT"

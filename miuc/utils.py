@@ -1,4 +1,4 @@
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 import re
 
 
@@ -13,6 +13,8 @@ def guess_name_by_url(url):
         return f'[{url}]({url})'
     url_info = urlparse(url)
     url_netlocs = url_info.netloc.split(".")
+
+    add_last_path = False
     # set url title based on netloc
     if len(url_netlocs) <= 1:
         # only top level domain or localhost, maybe never happend
@@ -27,6 +29,8 @@ def guess_name_by_url(url):
         ignore_third_domain = ["www", "about","me"]
         if url_netlocs[0] not in ignore_third_domain:
             url_title += f" {url_netlocs[0]}"
+        else:
+            add_last_path = True
 
     # print(netlocs)
 
@@ -52,17 +56,18 @@ def guess_name_by_url(url):
     ]
 
     for path in url_paths:
-        if path in path_keywords or len(url_netlocs) == 2:
+        if path in path_keywords or len(url_netlocs) == 2 or add_last_path:
             # last path may be the most important path
             important_path = url_paths[-1]
             if important_path.endswith(".html"):
-                important_path = important_path.replace(".html", "")
+                important_path = important_path.replace(".html", "").replace(".htm", "")
 
             ignore_path_titles = ["introduction",'index']
             if important_path not in ignore_path_titles:
                 url_title += f" {important_path}"
             break
-
+    
+    url_title = unquote(url_title)
     return f"[{url_title}]({url})"
 
 
