@@ -23,7 +23,8 @@ from .site_processor import (
     Juejin,
     Wiki,
     Weixin,
-    Geeksforgeeks
+    Geeksforgeeks,
+    SourceForge
 )
 from .utils import guess_name_by_url
 from urllib.parse import unquote
@@ -51,7 +52,8 @@ SPECIFIC_SITES = {
     r"^https://juejin\.cn.*": Juejin,
     r"^https://en\.wikipedia\.org/wiki/.*":Wiki,
     r"^https://mp.weixin\.qq\.com/s/.*": Weixin,
-    r"^https://www\.geeksforgeeks\.org/.*": Geeksforgeeks
+    r"^https://www\.geeksforgeeks\.org/.*": Geeksforgeeks,
+    r"^https://sourceforge\.net/projects/.*": SourceForge
 }
 
 

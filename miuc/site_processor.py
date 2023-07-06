@@ -87,9 +87,9 @@ class Processor:
             )  # pragma: no cover
         return response.text
 
-    def get_element_match(self, pattern: re.Pattern, flags = 0):
+    def get_element_match(self, pattern: re.Pattern, flags=0):
         html = self.get_html()
-        # self._debug(html)
+        self._debug(html)
         return re.compile(pattern, flags).search(html).group(1)
 
     def _debug(self, html):  # pragma: no cover
@@ -760,25 +760,79 @@ class Weixin(Processor):
             title = self.article_name
         return title
 
-class Geeksforgeeks(Processor):
 
+class Geeksforgeeks(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
         self.article_name = None
         self.site = "geeksforgeeks"
 
-        self.urls_re = [
-            r"https://www\.geeksforgeeks\.org/(?P<article>.*?)/?$"
-        ]
+        self.urls_re = [r"https://www\.geeksforgeeks\.org/(?P<article>.*?)/?$"]
 
     def parse(self, res: Match) -> str:
-        
-        self.article_name = res.group('article').replace('-',' ')
+        self.article_name = res.group("article").replace("-", " ")
 
     def format(self) -> str:
-        
         title = self.site
         if self.article_name:
             title = self.article_name
 
+        return title
+
+
+class SourceForge(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "sourceforge"
+        self.title = None
+        self.is_download = False
+
+        self.urls_re = [r"^https://sourceforge\.net/projects/(?P<id>.*?)(/download)?/?$"]
+
+    def parse(self, res: Match) -> str:
+        download_exts = [
+            ".zip",
+            ".rar",
+            ".7z",
+            ".tar",
+            ".gz",
+            ".tgz",
+            ".bz2",
+            ".xz",
+            ".exe",
+            ".dmg",
+            ".iso",
+            ".apk",
+            ".deb",
+            ".rpm",
+            ".jar",
+            ".tar.gz",
+            ".tar.bz2",
+            ".tar.xz",
+            ".tar.Z",
+            ".sit",
+            ".sitx",
+            ".z",
+            ".gz",
+            ".bz2",
+            ".xz",
+            ".sig",
+            ".asc"
+        ]
+        file_path:str = res.group('id')
+
+        for ext in download_exts:
+            if file_path.endswith(ext):
+                self.is_download = True
+                break
+        if self.is_download:
+            self.title = file_path.split('/')[-1]
+        else:
+            pattern = r"<h1 .*?>(.*?)\n</h1>"
+            self.title = self.get_element_match(pattern)
+
+    def format(self) -> str:
+        title = self.site
+        if self.title:
+            title = self.title
         return title
