@@ -89,7 +89,7 @@ class Processor:
 
     def get_element_match(self, pattern: re.Pattern, flags=0):
         html = self.get_html()
-        self._debug(html)
+        # self._debug(html)
         return re.compile(pattern, flags).search(html).group(1)
 
     def _debug(self, html):  # pragma: no cover
@@ -817,16 +817,16 @@ class SourceForge(Processor):
             ".bz2",
             ".xz",
             ".sig",
-            ".asc"
+            ".asc",
         ]
-        file_path:str = res.group('id')
+        file_path: str = res.group("id")
 
         for ext in download_exts:
             if file_path.endswith(ext):
                 self.is_download = True
                 break
         if self.is_download:
-            self.title = file_path.split('/')[-1]
+            self.title = file_path.split("/")[-1]
         else:
             pattern = r"<h1 .*?>(.*?)\n</h1>"
             self.title = self.get_element_match(pattern)
@@ -837,8 +837,8 @@ class SourceForge(Processor):
             title = self.title
         return title
 
-class VscodeExtension(Processor):
 
+class VscodeExtension(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
         self.site = "vscode extension"
@@ -850,13 +850,52 @@ class VscodeExtension(Processor):
         ]
 
     def parse(self, res: Match) -> str:
-        
-        self.author_name = res.group('author')
-        self.extension_name = res.group('extension_name')
+        self.author_name = res.group("author")
+        self.extension_name = res.group("extension_name")
 
     def format(self) -> str:
         title = self.site
         if self.extension_name:
-            title = 'vscode ' + self.extension_name
+            title = "vscode " + self.extension_name
         return title
-    
+
+
+class InfoQ(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "InfoQ"
+        self.article_name = None
+
+        self.urls_re = [r"^https://xie\.infoq\.cn/article/(?P<id>.*?)/?$"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r"<title>(.*?)_.*?</title>"
+        self.article_name = self.get_element_match(pattern)
+
+    def format(self) -> str:
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title
+
+
+class CTO51(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+
+        self.site = "51CTO"
+        self.article_name = None
+
+        self.urls_re = [r"^https://www\.51cto\.com/article/(?P<id>.*?)/?$"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r"<h1>(.*?)</h1>"
+        self.article_name = self.get_element_match(pattern)
+
+    def format(self) -> str:
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+        
+        return title

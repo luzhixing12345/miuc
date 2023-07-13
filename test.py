@@ -272,5 +272,25 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_infoq(self):
+
+        urls = [
+            "https://xie.infoq.cn/article/386bc5366bac88552085fd4ee",
+            "https://xie.infoq.cn/article/923385f5f181de629b61e5f91",
+            "https://xie.infoq.cn/article/fa9056105c9e79f247e514b7e",
+            "https://xie.infoq.cn/article/bb58fed4863e3c3aee072c2cf"
+        ]
+
+        for url in urls:
+            print(miuc.parse_url(url))
+
+    def test_51cto(self):
+
+        urls = [
+            "https://www.51cto.com/article/706997.html"
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
+
 if __name__ == "__main__":
     unittest.main()

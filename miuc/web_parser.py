@@ -25,7 +25,9 @@ from .site_processor import (
     Weixin,
     Geeksforgeeks,
     SourceForge,
-    VscodeExtension
+    VscodeExtension,
+    InfoQ,
+    CTO51,
 )
 from .utils import guess_name_by_url
 from urllib.parse import unquote
@@ -51,11 +53,13 @@ SPECIFIC_SITES = {
     r"^https://cloud\.tencent\.com.*": TecentCloud,
     r"^https://book\.douban\.com.*": Douban,
     r"^https://juejin\.cn.*": Juejin,
-    r"^https://en\.wikipedia\.org/wiki/.*":Wiki,
+    r"^https://en\.wikipedia\.org/wiki/.*": Wiki,
     r"^https://mp.weixin\.qq\.com/s/.*": Weixin,
     r"^https://www\.geeksforgeeks\.org/.*": Geeksforgeeks,
     r"^https://sourceforge\.net/projects/.*": SourceForge,
-    r"^https://marketplace\.visualstudio\.com/items\?itemName=.*": VscodeExtension
+    r"^https://marketplace\.visualstudio\.com/items\?itemName=.*": VscodeExtension,
+    r"^https://xie\.infoq\.cn/.*": InfoQ,
+    r"^https://www\.51cto\.com/.*": CTO51,
 }
 
 
@@ -63,14 +67,14 @@ def parse_url(url: str, max_time_limit: int = 5) -> str:
     """
     parse url and return the tite for the page
     """
-    res = re.match(r'^https://link\.zhihu\.com/\?target=(?P<url>.*?)/?$',url)
+    res = re.match(r"^https://link\.zhihu\.com/\?target=(?P<url>.*?)/?$", url)
     if res:
-        return parse_url(unquote(res.group('url')), max_time_limit)
+        return parse_url(unquote(res.group("url")), max_time_limit)
     # first check the url whether in specific sites
     try:
         for specific_page_url in SPECIFIC_SITES:
             if re.match(specific_page_url, url):
                 return SPECIFIC_SITES[specific_page_url](max_time_limit)(url)
         return guess_name_by_url(url)
-    except Exception as e: # pragma: no cover
+    except Exception as e:  # pragma: no cover
         return guess_name_by_url(url)
