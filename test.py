@@ -40,7 +40,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://luzhixing12345.github.io/tags/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/",
             "https://luzhixing12345.github.io/2023/02/28/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/pws/",
             "https://luzhixing12345.github.io/2023/02/28/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/VMware%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%85%8D%E7%BD%AE/",
-            "https://zhou-yuxin.github.io/articles/2018/Linux物理内存管理_获取物理内存布局、划分内存区与创建NUMA节点/index.html"
+            "https://zhou-yuxin.github.io/articles/2018/Linux%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E2%80%94%E2%80%94%E8%8E%B7%E5%8F%96%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E3%80%81%E5%88%92%E5%88%86%E5%86%85%E5%AD%98%E5%8C%BA%E4%B8%8E%E5%88%9B%E5%BB%BANUMA%E8%8A%82%E7%82%B9/index.html"
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -288,6 +288,13 @@ class MiucUnitTest(unittest.TestCase):
 
         urls = [
             "https://www.51cto.com/article/706997.html"
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
+
+    def test_souhu(self):
+        urls = [
+            "https://www.sohu.com/a/669096209_121124373"
         ]
         for url in urls:
             print(miuc.parse_url(url))

@@ -28,6 +28,7 @@ from .site_processor import (
     VscodeExtension,
     InfoQ,
     CTO51,
+    Souhu
 )
 from .utils import guess_name_by_url
 from urllib.parse import unquote
@@ -60,6 +61,7 @@ SPECIFIC_SITES = {
     r"^https://marketplace\.visualstudio\.com/items\?itemName=.*": VscodeExtension,
     r"^https://xie\.infoq\.cn/.*": InfoQ,
     r"^https://www\.51cto\.com/.*": CTO51,
+    r"^https://www\.sohu\.com/.*": Souhu
 }
 
 

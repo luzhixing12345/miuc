@@ -27,7 +27,7 @@ class Error(Exception):
 class Processor:
     def __init__(self, max_time_limit: int = 5) -> None:
         self.class_name = self.__class__.__name__
-        self.url = None
+        self._url = None
         self.max_time_limit = max_time_limit
         self.urls_re = [
             # ...
@@ -39,19 +39,21 @@ class Processor:
             "Content-Type": "text/html;charset=utf-8",
         }
 
+        self.article_name = None
+
     def __call__(self, url: str):
-        self.url: str = url
+        self._url: str = url
         if len(self.urls_re) == 0:  # pragma: no cover
             self.error("finish urls_re in your processor class")
         for url_re in self.urls_re:
-            res = re.compile(url_re).match(self.url)
+            res = re.compile(url_re).match(self._url)
             if res:
                 self.parse(res)
                 break
         title = unquote(self.format())
         if title is None or title == "":  # pragma: no cover
-            return guess_name_by_url(self.url)
-        return f"[{title}]({self.url})"
+            return guess_name_by_url(self._url)
+        return f"[{title}]({self._url})"
 
     def parse(self, res: Match) -> str:  # pragma: no cover
         """
@@ -74,22 +76,22 @@ class Processor:
         call this function if mismatch
         """
         # print(self.url)
-        raise Error(self.url, self.class_name, message=msg)
+        raise Error(self._url, self.class_name, message=msg)
 
     def get_html(self):
         """
         call this function if could not parse only by url
         """
-        response = requests.get(self.url, headers=self.headers, timeout=self.max_time_limit)
+        response = requests.get(self._url, headers=self.headers, timeout=self.max_time_limit)
         if response.status_code != 200:
             self.error(
-                f"connect {self.url} failed: status code [{response.status_code}]"
+                f"connect {self._url} failed: status code [{response.status_code}]"
             )  # pragma: no cover
         return response.text
 
-    def get_element_match(self, pattern: re.Pattern, flags=0):
+    def get_element_match(self, pattern: re.Pattern, flags=0) -> str:
         html = self.get_html()
-        # self._debug(html)
+        self._debug(html)
         return re.compile(pattern, flags).search(html).group(1)
 
     def _debug(self, html):  # pragma: no cover
@@ -212,16 +214,18 @@ class Githubio(Processor):
         ]
 
     def parse(self, res: Match) -> str:
+        
         if "user" in res.groupdict():
             self.user_name = res.group("user")
         if "repo" in res.groupdict():
             self.repo_name = res.group("repo")
         if "routine" in res.groupdict():
-            origin_routine = res.group("routine").split("/")[-1]
+            origin_routines = res.group("routine").split("/")
             ignore_rountines = ["index.html", "index.htm", "#"]
-            if origin_routine in ignore_rountines:
-                origin_routine = self.repo_name
-            self.routine = origin_routine
+            article_name = origin_routines[-1]
+            if article_name in ignore_rountines:
+                article_name = origin_routines[-2]
+            self.routine = article_name
 
     def format(self):
         if self.repo_name is None:
@@ -328,7 +332,7 @@ class Youtube(Processor):
         # could not directly get youtube video title, instead use the following method
         # https://stackoverflow.com/a/52664178/17869889
 
-        params = {"format": "json", "url": self.url}
+        params = {"format": "json", "url": self._url}
         url = f"https://www.youtube.com/oembed?{urllib.parse.urlencode(params)}"
         response = requests.get(url, timeout=self.max_time_limit)
         data = json.loads(response.text)
@@ -460,9 +464,9 @@ class Bilibili(Processor):
         # bilibili url often following with "spm_id_from=333.999.0.0 ..."
         # clean the url
         if self.type_name != "space":
-            self.url = f"https://www.bilibili.com/{self.type_name}/{self.id}"
+            self._url = f"https://www.bilibili.com/{self.type_name}/{self.id}"
         else:
-            self.url = f"https://space.bilibili.com/{self.id}"
+            self._url = f"https://space.bilibili.com/{self.id}"
 
         if self.type_name == "video":
             pattern = r"<h1 .*>(.*?)</h1>"
@@ -521,7 +525,7 @@ class CSDN(Processor):
             self.user_id = res.group("user_id")
             self.article_id = res.group("article_id")
             # clean the url
-            self.url = f"https://blog.csdn.net/{self.user_id}/article/details/{self.article_id}"
+            self._url = f"https://blog.csdn.net/{self.user_id}/article/details/{self.article_id}"
             pattern = r'<h1 class="title-article" id="articleContentId">(.*?)</h1>'
             self.article_name = self.get_element_match(pattern)
         elif "category" in res.groupdict():
@@ -898,4 +902,27 @@ class CTO51(Processor):
         if self.article_name:
             title = self.article_name
         
+        return title
+
+class Souhu(Processor):
+
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = 'souhu'
+    
+        self.urls_re = [
+            r'^https://www\.sohu\.com/a/(?P<id>.*?)/?$'
+        ]
+
+    def parse(self, res: Match) -> str:
+        
+        pattern =  r'<title>(.*?)_.*?</title>'
+        self.article_name = self.get_element_match(pattern).strip()
+
+    def format(self) -> str:
+        
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
         return title
