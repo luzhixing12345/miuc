@@ -15,6 +15,7 @@ from .utils import guess_name_by_url
 from re import Match
 from urllib.parse import unquote
 
+DEBUG = False
 
 class Error(Exception):
     def __init__(self, url: str, class_name: str, message: str = None) -> None:  # pragma: no cover
@@ -92,14 +93,15 @@ class Processor:
     def get_element_match(self, pattern: re.Pattern, flags=0) -> str:
         html = self.get_html()
         self._debug(html)
-        return re.compile(pattern, flags).search(html).group(1)
+        return re.compile(pattern, flags).search(html).group(1).strip()
 
     def _debug(self, html):  # pragma: no cover
         """
         only work for me to debug
         """
-        with open("a.html", "w", encoding="utf-8") as f:
-            f.write(html)
+        if DEBUG:
+            with open("a.html", "w", encoding="utf-8") as f:
+                f.write(html)
 
 
 class Github(Processor):
@@ -660,7 +662,7 @@ class TecentCloud(Processor):
 
         if "article" in res.groupdict():
             pattern = r'<h2 class="title-text">(.*?)</h2>'
-            self.article_name = self.get_element_match(pattern)
+            self.article_name = self.get_element_match(pattern, flags=re.S)
         elif "user" in res.groupdict():
             pattern = r'<h3 class="uc-hero-name">(.*?)</h3>'
             self.user_name = self.get_element_match(pattern)

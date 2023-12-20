@@ -174,7 +174,8 @@ class MiucUnitTest(unittest.TestCase):
         urls = [
             "https://cloud.tencent.com/",
             "https://cloud.tencent.com/developer/user/7055715",
-            'https://cloud.tencent.com/developer/article/1679861'
+            'https://cloud.tencent.com/developer/article/1679861',
+            'https://cloud.tencent.com/developer/article/1409664'
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -298,6 +299,8 @@ class MiucUnitTest(unittest.TestCase):
         ]
         for url in urls:
             print(miuc.parse_url(url))
+            
+    
 
 if __name__ == "__main__":
     unittest.main()
