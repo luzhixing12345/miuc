@@ -2,7 +2,7 @@
     "name": "miuc",
     "displayName": "miuc",
     "description": "markdown intelligent url complete",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "engines": {
         "vscode": "^1.78.0"
     },
@@ -15,7 +15,7 @@
         "url": "https://github.com/luzhixing12345/miuc/issues"
     },
     "publisher": "kamilu",
-    "icon": "./images/logo.png",
+    "icon": "images/logo-removebg-preview.png",
     "keywords": [
         "markdown",
         "url",

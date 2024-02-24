@@ -61,8 +61,19 @@ async function checkMiucEnvironment() {
             await installPackage('miuc');
         }
     } else {
-        console.log("miuc is installed");
+        const miucVersion = await getMiucVersion();
+        console.log("miuc version: " + miucVersion);
     }
+}
+
+async function getMiucVersion(): Promise<string> {
+    // miuc -v
+    return new Promise<string>((resolve) => {
+        const process = spawn('miuc', ['-v']);
+        process.on('close', (code) => {
+            resolve(`miuc version: ${code}`);
+        });
+    });
 }
 
 
@@ -72,7 +83,7 @@ function getUrlTitle() {
     clipboardTextPromise.then(text => {
         if (isWebUrl(text)) {
             // call miuc
-            const command = `miuc ${text}`;
+            const command = `miuc "${text}"`;
             // const command = `miuc ${text}`;
             child_process.exec(command, (error, stdout) => {
                 if (error) {
@@ -85,7 +96,6 @@ function getUrlTitle() {
                 const result = stdout.trim();
                 // insert
                 insertText(result, true);
-
             });
         } else {
             insertText(text, false);
@@ -118,7 +128,7 @@ function isWebUrl(str: string): boolean {
 async function isPackageInstalled(packageName: string): Promise<boolean> {
     // check by pip show
     return new Promise<boolean>((resolve) => {
-        const process = spawn('pip',['show',packageName]);
+        const process = spawn('pip', ['show', packageName]);
         process.on('close', (code) => {
             resolve(code === 0);
         });
