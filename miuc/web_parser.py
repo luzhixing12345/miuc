@@ -6,30 +6,9 @@
 *@email: luzhixing12345@163.com
 *@Github: luzhixing12345
 """
+
 import re
-from .site_processor import (
-    Github,
-    Stackoverflow,
-    Zhihu,
-    Bilibili,
-    Githubio,
-    Youtube,
-    CSDN,
-    Githubusercontent,
-    CNblog,
-    Jianshu,
-    TecentCloud,
-    Douban,
-    Juejin,
-    Wiki,
-    Weixin,
-    Geeksforgeeks,
-    SourceForge,
-    VscodeExtension,
-    InfoQ,
-    CTO51,
-    Souhu
-)
+from .site_processor import *
 from .utils import guess_name_by_url
 from urllib.parse import unquote
 
@@ -61,7 +40,7 @@ SPECIFIC_SITES = {
     r"^https://marketplace\.visualstudio\.com/items\?itemName=.*": VscodeExtension,
     r"^https://xie\.infoq\.cn/.*": InfoQ,
     r"^https://www\.51cto\.com/.*": CTO51,
-    r"^https://www\.sohu\.com/.*": Souhu
+    r"^https://www\.sohu\.com/.*": Souhu,
 }
 
 

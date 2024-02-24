@@ -110,7 +110,8 @@ class MiucUnitTest(unittest.TestCase):
             "https://www.bilibili.com/video/BV1J14y1D7Sw/?spm_id_from=333.999.list.card_archive.click&vd_source=7b4c585df2dd3777eae63bf4867f6c11",
             "https://www.bilibili.com/video/BV13V4y1y73X/?spm_id_from=444.41.list.card_archive.click&vd_source=7b4c585df2dd3777eae63bf4867f6c11",
             "https://space.bilibili.com/1010983811?spm_id_from=333.337.search-card.all.click",
-            "https://space.bilibili.com/261543088?spm_id_from=333.999.0.0"
+            "https://space.bilibili.com/261543088?spm_id_from=333.999.0.0",
+            "https://www.bilibili.com/video/BV1Bh4y1x7tv/?spm_id_from=333.788&vd_source=7b4c585df2dd3777eae63bf4867f6c11"
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -300,7 +301,12 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
             
-    
+    def test_baidu(self):
+        urls = [
+            "https://zhidao.baidu.com/question/435213422142183884.html"
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
 
 if __name__ == "__main__":
     unittest.main()

@@ -15,7 +15,8 @@ from .utils import guess_name_by_url
 from re import Match
 from urllib.parse import unquote
 
-DEBUG = False
+DEBUG = True
+
 
 class Error(Exception):
     def __init__(self, url: str, class_name: str, message: str = None) -> None:  # pragma: no cover
@@ -34,7 +35,8 @@ class Processor:
             # ...
         ]
         self.headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
             "Accept-Encoding": "gzip",
             "Connection": "keep-alive",
             "Content-Type": "text/html;charset=utf-8",
@@ -85,9 +87,7 @@ class Processor:
         """
         response = requests.get(self._url, headers=self.headers, timeout=self.max_time_limit)
         if response.status_code != 200:
-            self.error(
-                f"connect {self._url} failed: status code [{response.status_code}]"
-            )  # pragma: no cover
+            self.error(f"connect {self._url} failed: status code [{response.status_code}]")  # pragma: no cover
         return response.text
 
     def get_element_match(self, pattern: re.Pattern, flags=0) -> str:
@@ -216,7 +216,7 @@ class Githubio(Processor):
         ]
 
     def parse(self, res: Match) -> str:
-        
+
         if "user" in res.groupdict():
             self.user_name = res.group("user")
         if "repo" in res.groupdict():
@@ -460,7 +460,6 @@ class Bilibili(Processor):
     def parse(self, res: Match) -> str:
         if "site" in res.groupdict():
             return
-
         self.type_name = res.group("type")
         self.id = res.group("id")
         # bilibili url often following with "spm_id_from=333.999.0.0 ..."
@@ -472,6 +471,7 @@ class Bilibili(Processor):
 
         if self.type_name == "video":
             pattern = r"<h1 .*>(.*?)</h1>"
+            self._url = f'https://www.bilibili.com/video/{self.id}'
             self.name = self.get_element_match(pattern)
         elif self.type_name == "opus":
             pass
@@ -903,28 +903,28 @@ class CTO51(Processor):
         title = self.site
         if self.article_name:
             title = self.article_name
-        
+
         return title
+
 
 class Souhu(Processor):
 
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
-        self.site = 'souhu'
-    
-        self.urls_re = [
-            r'^https://www\.sohu\.com/a/(?P<id>.*?)/?$'
-        ]
+        self.site = "souhu"
+
+        self.urls_re = [r"^https://www\.sohu\.com/a/(?P<id>.*?)/?$"]
 
     def parse(self, res: Match) -> str:
-        
-        pattern =  r'<title>(.*?)_.*?</title>'
+
+        pattern = r"<title>(.*?)_.*?</title>"
         self.article_name = self.get_element_match(pattern).strip()
 
     def format(self) -> str:
-        
+
         title = self.site
         if self.article_name:
             title = self.article_name
 
         return title
+
