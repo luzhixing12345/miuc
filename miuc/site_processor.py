@@ -16,6 +16,7 @@ from re import Match
 from urllib.parse import unquote
 
 DEBUG = False
+# DEBUG = True
 
 
 class Error(Exception):
@@ -636,9 +637,9 @@ class Jianshu(Processor):
 
     def format(self):
         title = self.site
-        if self.article_name:
+        if self.article_name: # pragma: no cover
             title = self.article_name
-        elif self.user_name:
+        elif self.user_name: # pragma: no cover
             title = self.user_name
         return title
 
@@ -952,12 +953,52 @@ class Acm(Processor):
 class Arxiv(Processor):
     def __init__(self, max_time_limit: int = 5) -> None:
         super().__init__(max_time_limit)
-        self.site = "arxiv"
+        self.site = "arxiv paper"
 
         self.urls_re = [r"^https://arxiv\.org/abs/*?"]
 
     def parse(self, res: Match) -> str:
         pattern = r"<h1 class=\"title mathjax\"><span class=\"descriptor\">Title:</span>(.*?)</h1>"
+        self.article_name = self.get_element_match(pattern).strip()
+
+    def format(self) -> str:
+
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title
+
+
+class IEEE(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "IEEE paper"
+
+        self.urls_re = [r"^https://ieeexplore\.ieee\.org/document/.*"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r"<meta name=\"parsely-title\" content=\"(.*?)\ | IEEE Conference Publication | IEEE Xplore\" />"
+        self.article_name = self.get_element_match(pattern).strip()
+
+    def format(self) -> str:
+
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title
+
+
+class USENIX(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "usenix paper"
+
+        self.urls_re = [r"^https://www\.usenix\.org/conference/.*"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r"<h1 id=\"page-title\">(.*?)</h1>"
         self.article_name = self.get_element_match(pattern).strip()
 
     def format(self) -> str:

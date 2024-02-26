@@ -26,7 +26,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://github.com/microsoft/vscode/commit/a5727468f373af49f785a94e13e7a2890a1097af",
             "https://github.com/search?q=fcitx5+theme&type=Repositories",
             "https://github.com/search?q=linux+language%3AMarkdown&type=code&l=Markdown",
-            "https://github.com/fool2fish/dragon-book-exercise-answers/blob/master/ch02/2.2/2.2.md"
+            "https://github.com/fool2fish/dragon-book-exercise-answers/blob/master/ch02/2.2/2.2.md",
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -40,7 +40,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://luzhixing12345.github.io/tags/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/",
             "https://luzhixing12345.github.io/2023/02/28/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/pws/",
             "https://luzhixing12345.github.io/2023/02/28/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/VMware%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%85%8D%E7%BD%AE/",
-            "https://zhou-yuxin.github.io/articles/2018/Linux%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E2%80%94%E2%80%94%E8%8E%B7%E5%8F%96%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E3%80%81%E5%88%92%E5%88%86%E5%86%85%E5%AD%98%E5%8C%BA%E4%B8%8E%E5%88%9B%E5%BB%BANUMA%E8%8A%82%E7%82%B9/index.html"
+            "https://zhou-yuxin.github.io/articles/2018/Linux%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E2%80%94%E2%80%94%E8%8E%B7%E5%8F%96%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E3%80%81%E5%88%92%E5%88%86%E5%86%85%E5%AD%98%E5%8C%BA%E4%B8%8E%E5%88%9B%E5%BB%BANUMA%E8%8A%82%E7%82%B9/index.html",
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -74,7 +74,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://www.youtube.com/watch?v=iTZ1-85I77c&list=PL4cUxeGkcC9gUgr39Q_yD6v-bSyMwKPUI&index=2",
             "https://youtu.be/iTZ1-85I77c",
             "https://www.youtube.com/@programmingwithmosh/videos",
-            "https://www.youtube.com/playlist?list=PLyzOVJj3bHQuloKGG59rS43e29ro7I57J"
+            "https://www.youtube.com/playlist?list=PLyzOVJj3bHQuloKGG59rS43e29ro7I57J",
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -111,7 +111,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://www.bilibili.com/video/BV13V4y1y73X/?spm_id_from=444.41.list.card_archive.click&vd_source=7b4c585df2dd3777eae63bf4867f6c11",
             "https://space.bilibili.com/1010983811?spm_id_from=333.337.search-card.all.click",
             "https://space.bilibili.com/261543088?spm_id_from=333.999.0.0",
-            "https://www.bilibili.com/video/BV1Bh4y1x7tv/?spm_id_from=333.788&vd_source=7b4c585df2dd3777eae63bf4867f6c11"
+            "https://www.bilibili.com/video/BV1Bh4y1x7tv/?spm_id_from=333.788&vd_source=7b4c585df2dd3777eae63bf4867f6c11",
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -128,7 +128,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://blog.csdn.net/weixin_38493195/article/details/126981220?spm=1001.2014.3001.5502",
             "https://blog.csdn.net/weixin_38493195/article/details/127588073?spm=1001.2014.3001.5502",
             "https://blog.csdn.net/weixin_38493195/article/details/128329873?spm=1001.2014.3001.5502",
-            "https://blog.csdn.net/weixin_38493195/article/details/124870781"
+            "https://blog.csdn.net/weixin_38493195/article/details/124870781",
         ]
 
         for url in urls:
@@ -139,22 +139,19 @@ class MiucUnitTest(unittest.TestCase):
             "https://www.cnblogs.com/pythonista/p/17501383.html",
             "https://www.cnblogs.com/chu-jian/p/17501124.html",
             "https://www.cnblogs.com/haiyux/p/17501641.html",
-            "https://www.cnblogs.com/deali/p/17501704.html"
-            "https://www.cnblogs.com/guanghe/p/11975387.html",
+            "https://www.cnblogs.com/deali/p/17501704.html" "https://www.cnblogs.com/guanghe/p/11975387.html",
             "https://www.cnblogs.com/zhiyiYo/p/17492487.html",
             "https://www.cnblogs.com/pythonista/p/17501383.html",
             "https://www.cnblogs.com/zhiyiYo",
             "https://www.cnblogs.com/",
-            "https://www.cnblogs.com/armlinux/archive/2010/11/26/2396888.html"
+            "https://www.cnblogs.com/armlinux/archive/2010/11/26/2396888.html",
         ]
         for url in urls:
             print(miuc.parse_url(url))
 
     def test_Githubusercontent(self):
 
-        urls = [
-            "https://raw.githubusercontent.com/learner-lu/picbed/master/action.gif"
-        ]
+        urls = ["https://raw.githubusercontent.com/learner-lu/picbed/master/action.gif"]
         for url in urls:
             print(miuc.parse_url(url))
 
@@ -165,7 +162,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://www.jianshu.com/p/b2288ef3f11e",
             "https://www.jianshu.com/u/441d207955f2",
             "https://www.jianshu.com/u/c0df9f7c15fa",
-            "https://www.jianshu.com/p/b9552bcd27be"
+            "https://www.jianshu.com/p/b9552bcd27be",
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -175,8 +172,8 @@ class MiucUnitTest(unittest.TestCase):
         urls = [
             "https://cloud.tencent.com/",
             "https://cloud.tencent.com/developer/user/7055715",
-            'https://cloud.tencent.com/developer/article/1679861',
-            'https://cloud.tencent.com/developer/article/1409664'
+            "https://cloud.tencent.com/developer/article/1679861",
+            "https://cloud.tencent.com/developer/article/1409664",
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -186,7 +183,7 @@ class MiucUnitTest(unittest.TestCase):
         urls = [
             "https://book.douban.com/",
             "https://book.douban.com/subject/2334288/",
-            "https://book.douban.com/subject/35966120/?source=2022_annual_book"
+            "https://book.douban.com/subject/35966120/?source=2022_annual_book",
         ]
 
         for url in urls:
@@ -194,10 +191,7 @@ class MiucUnitTest(unittest.TestCase):
 
     def test_juejin(self):
 
-        urls = [
-            "https://juejin.cn/post/7134950321595351047",
-            "https://juejin.cn"
-        ]
+        urls = ["https://juejin.cn/post/7134950321595351047", "https://juejin.cn"]
 
         for url in urls:
             print(miuc.parse_url(url))
@@ -218,7 +212,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://link.zhihu.com/?target=https%3A//learnopengl.com/",
             "https://link.zhihu.com/?target=https%3A//github.com/yue/yue",
             "https://link.zhihu.com/?target=https%3A//github.com/yue/yue/issues/166",
-            "https://www.shellcodes.org/CommonLisp/CommonLisp%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Common%20Lisp%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83.html"
+            "https://www.shellcodes.org/CommonLisp/CommonLisp%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Common%20Lisp%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83.html",
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -228,7 +222,7 @@ class MiucUnitTest(unittest.TestCase):
         urls = [
             "https://en.wikipedia.org/wiki/Roman_numerals",
             "https://en.wikipedia.org/wiki/GCC",
-            "https://en.wikipedia.org/wiki/GNU_Compiler_Collection"
+            "https://en.wikipedia.org/wiki/GNU_Compiler_Collection",
         ]
         for url in urls:
             print(miuc.parse_url(url))
@@ -237,7 +231,7 @@ class MiucUnitTest(unittest.TestCase):
 
         urls = [
             "https://mp.weixin.qq.com/s/rMREBMGquxTZQXrx4sfkqw",
-            "https://mp.weixin.qq.com/s/mCCi2wFRXojpxRrKEwY-8g"
+            "https://mp.weixin.qq.com/s/mCCi2wFRXojpxRrKEwY-8g",
         ]
 
         for url in urls:
@@ -245,10 +239,8 @@ class MiucUnitTest(unittest.TestCase):
 
     def test_geeksforgeek(self):
 
-        urls = [
-            "https://www.geeksforgeeks.org/cache-coherence-protocols-in-multiprocessor-system/"
-        ]
-        
+        urls = ["https://www.geeksforgeeks.org/cache-coherence-protocols-in-multiprocessor-system/"]
+
         for url in urls:
             print(miuc.parse_url(url))
 
@@ -259,17 +251,14 @@ class MiucUnitTest(unittest.TestCase):
             "https://sourceforge.net/projects/freepascal/files/Win32/3.2.2/",
             "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-win32/seh/x86_64-8.1.0-release-win32-seh-rt_v6-rev0.7z",
             "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/installer/mingw-w64-install.exe",
-            "https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v11.0.0.zip/download"
+            "https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v11.0.0.zip/download",
         ]
         for url in urls:
             print(miuc.parse_url(url))
 
-
     def test_vscode_market(self):
 
-        urls = [
-            "https://marketplace.visualstudio.com/items?itemName=AnsonYeung.pascal-language-basics"
-        ]
+        urls = ["https://marketplace.visualstudio.com/items?itemName=AnsonYeung.pascal-language-basics"]
 
         for url in urls:
             print(miuc.parse_url(url))
@@ -280,7 +269,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://xie.infoq.cn/article/386bc5366bac88552085fd4ee",
             "https://xie.infoq.cn/article/923385f5f181de629b61e5f91",
             "https://xie.infoq.cn/article/fa9056105c9e79f247e514b7e",
-            "https://xie.infoq.cn/article/bb58fed4863e3c3aee072c2cf"
+            "https://xie.infoq.cn/article/bb58fed4863e3c3aee072c2cf",
         ]
 
         for url in urls:
@@ -288,40 +277,42 @@ class MiucUnitTest(unittest.TestCase):
 
     def test_51cto(self):
 
-        urls = [
-            "https://www.51cto.com/article/706997.html"
-        ]
+        urls = ["https://www.51cto.com/article/706997.html"]
         for url in urls:
             print(miuc.parse_url(url))
 
     def test_souhu(self):
-        urls = [
-            "https://www.sohu.com/a/669096209_121124373"
-        ]
+        urls = ["https://www.sohu.com/a/669096209_121124373"]
         for url in urls:
             print(miuc.parse_url(url))
-            
+
     def test_baidu(self):
-        urls = [
-            "https://zhidao.baidu.com/question/435213422142183884.html"
-        ]
+        urls = ["https://zhidao.baidu.com/question/435213422142183884.html"]
         for url in urls:
             print(miuc.parse_url(url))
 
     def test_acm(self):
-        urls = [
-            "https://dl.acm.org/doi/10.5555/1991596.1991599",
-            "https://dl.acm.org/doi/10.5555/2591272.2591300"
-        ]
+        urls = ["https://dl.acm.org/doi/10.5555/1991596.1991599", "https://dl.acm.org/doi/10.5555/2591272.2591300"]
         for url in urls:
             print(miuc.parse_url(url))
-            
+
     def test_arxiv(self):
         urls = [
             "https://arxiv.org/abs/2308.10714",
         ]
         for url in urls:
             print(miuc.parse_url(url))
+
+    def test_IEEE(self):
+        urls = ["https://ieeexplore.ieee.org/document/10066614", "https://ieeexplore.ieee.org/document/8708249"]
+        for url in urls:
+            print(miuc.parse_url(url))
+
+    def test_USENIX(self):
+        urls = ["https://www.usenix.org/conference/fast20/presentation/yang"]
+        for url in urls:
+            print(miuc.parse_url(url))
+
 
 if __name__ == "__main__":
     unittest.main()

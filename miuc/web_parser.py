@@ -42,7 +42,9 @@ SPECIFIC_SITES = {
     r"^https://www\.51cto\.com/.*": CTO51,
     r"^https://www\.sohu\.com/.*": Souhu,
     r"^https://dl\.acm\.org/doi/.*": Acm,
-    r"^https://arxiv\.org/abs/*?": Arxiv
+    r"^https://arxiv\.org/abs/*?": Arxiv,
+    r"^https://ieeexplore\.ieee\.org/document/.*": IEEE,
+    r"^https://www\.usenix\.org/conference/.*": USENIX
 }
 
 
