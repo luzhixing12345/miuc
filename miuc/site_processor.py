@@ -15,7 +15,7 @@ from .utils import guess_name_by_url
 from re import Match
 from urllib.parse import unquote
 
-DEBUG = True
+DEBUG = False
 
 
 class Error(Exception):
@@ -471,7 +471,7 @@ class Bilibili(Processor):
 
         if self.type_name == "video":
             pattern = r"<h1 .*>(.*?)</h1>"
-            self._url = f'https://www.bilibili.com/video/{self.id}'
+            self._url = f"https://www.bilibili.com/video/{self.id}"
             self.name = self.get_element_match(pattern)
         elif self.type_name == "opus":
             pass
@@ -928,3 +928,42 @@ class Souhu(Processor):
 
         return title
 
+
+class Acm(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "acm"
+
+        self.urls_re = [r"^https://dl\.acm\.org/doi/.*"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r"<h1 class=\"citation__title\">(.*?)</h1>"
+        self.article_name = self.get_element_match(pattern).strip()
+
+    def format(self) -> str:
+
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title
+
+
+class Arxiv(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "arxiv"
+
+        self.urls_re = [r"^https://arxiv\.org/abs/*?"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r"<h1 class=\"title mathjax\"><span class=\"descriptor\">Title:</span>(.*?)</h1>"
+        self.article_name = self.get_element_match(pattern).strip()
+
+    def format(self) -> str:
+
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title

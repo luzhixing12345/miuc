@@ -41,6 +41,8 @@ SPECIFIC_SITES = {
     r"^https://xie\.infoq\.cn/.*": InfoQ,
     r"^https://www\.51cto\.com/.*": CTO51,
     r"^https://www\.sohu\.com/.*": Souhu,
+    r"^https://dl\.acm\.org/doi/.*": Acm,
+    r"^https://arxiv\.org/abs/*?": Arxiv
 }
 
 

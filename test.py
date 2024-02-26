@@ -308,5 +308,20 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_acm(self):
+        urls = [
+            "https://dl.acm.org/doi/10.5555/1991596.1991599",
+            "https://dl.acm.org/doi/10.5555/2591272.2591300"
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
+            
+    def test_arxiv(self):
+        urls = [
+            "https://arxiv.org/abs/2308.10714",
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
+
 if __name__ == "__main__":
     unittest.main()
