@@ -97,6 +97,7 @@ class MiucUnitTest(unittest.TestCase):
             "https://www.zhihu.com/people/lu-zhi-xing-66-64",
             "https://www.zhihu.com/question/600808314/answer/3062270104",
             "https://www.zhihu.com/column/hinus",
+            "https://zhuanlan.zhihu.com/p/96047937"
         ]
         for url in urls:
             print(miuc.parse_url(url))

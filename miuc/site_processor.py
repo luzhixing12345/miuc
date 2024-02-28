@@ -14,6 +14,7 @@ import json
 from .utils import guess_name_by_url
 from re import Match
 from urllib.parse import unquote
+import html
 
 DEBUG = False
 # DEBUG = True
@@ -57,6 +58,8 @@ class Processor:
         title = unquote(self.format())
         if title is None or title == "":  # pragma: no cover
             return guess_name_by_url(self._url)
+
+        title = html.unescape(title)
         return f"[{title}]({self._url})"
 
     def parse(self, res: Match) -> str:  # pragma: no cover
@@ -237,7 +240,9 @@ class Githubio(Processor):
             if self.routine is None:
                 title = f"{self.repo_name} document"
             else:
-                title = self.routine
+                title: str = self.routine
+                if title.endswith(".html"):
+                    title = title[:-5]
         return title
 
 
@@ -637,9 +642,9 @@ class Jianshu(Processor):
 
     def format(self):
         title = self.site
-        if self.article_name: # pragma: no cover
+        if self.article_name:  # pragma: no cover
             title = self.article_name
-        elif self.user_name: # pragma: no cover
+        elif self.user_name:  # pragma: no cover
             title = self.user_name
         return title
 
