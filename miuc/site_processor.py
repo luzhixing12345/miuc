@@ -760,7 +760,7 @@ class Weixin(Processor):
         super().__init__(max_time_limit)
         self.site = "微信公众号"
         self.article_name = None
-        self.urls_re = [r"^https://mp\.weixin\.qq\.com/s/(?P<id>.*?)/?$"]
+        self.urls_re = [r"^https://mp\.weixin\.qq\.com/s/?(.*?)/?$"]
 
     def parse(self, res: Match) -> str:
         pattern = r'<h1 class="rich_media_title " id="activity-name">(.*?)</h1>'

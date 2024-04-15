@@ -34,7 +34,7 @@ SPECIFIC_SITES = {
     r"^https://book\.douban\.com.*": Douban,
     r"^https://juejin\.cn.*": Juejin,
     r"^https://en\.wikipedia\.org/wiki/.*": Wiki,
-    r"^https://mp.weixin\.qq\.com/s/.*": Weixin,
+    r"^https://mp.weixin\.qq\.com/s/?.*": Weixin,
     r"^https://www\.geeksforgeeks\.org/.*": Geeksforgeeks,
     r"^https://sourceforge\.net/projects/.*": SourceForge,
     r"^https://marketplace\.visualstudio\.com/items\?itemName=.*": VscodeExtension,
@@ -52,6 +52,7 @@ def parse_url(url: str, max_time_limit: int = 5) -> str:
     """
     parse url and return the tite for the page
     """
+    url = "https://mp.weixin.qq.com/s?__biz=Mzg2OTc0ODAzMw==&mid=2247506713&idx=1&sn=38ca5f3af28d741b46e0197a5decd0a2&chksm=ce9ac737f9ed4e21f8a39efd85be7390863ab13faa9bafc1f031f1adef8b0c2b561f04302b20&scene=178&cur_album_id=2519398872503353344#rd"
     res = re.match(r"^https://link\.zhihu\.com/\?target=(?P<url>.*?)/?$", url)
     if res:
         return parse_url(unquote(res.group("url")), max_time_limit)
