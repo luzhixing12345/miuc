@@ -2,7 +2,7 @@
     "name": "miuc",
     "displayName": "miuc",
     "description": "markdown intelligent url complete",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "engines": {
         "vscode": "^1.78.0"
     },
@@ -41,6 +41,12 @@
                 "command": "miuc.tabKey",
                 "key": "tab",
                 "mac": "tab",
+                "when": "editorLangId == markdown && editorTextFocus && editorHasSelection"
+            },
+            {
+                "command": "miuc.escKey",
+                "key": "escape",
+                "mac": "escape",
                 "when": "editorLangId == markdown && editorTextFocus && editorHasSelection"
             }
         ],

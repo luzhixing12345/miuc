@@ -4,7 +4,7 @@
 
 Markdown Intelligence Url Complete
 
-Paste URL by <kbd>ctrl</kbd> + <kbd>v</kbd>, miuc will complete the title for you
+Paste URL by <kbd>ctrl</kbd> + <kbd>v</kbd>, miuc will complete the title for you, and <kbd>esc</kbd> in case you want the origin url format
 
 ## Features
 
