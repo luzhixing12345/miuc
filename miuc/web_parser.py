@@ -44,7 +44,9 @@ SPECIFIC_SITES = {
     r"^https://dl\.acm\.org/doi/.*": Acm,
     r"^https://arxiv\.org/abs/*?": Arxiv,
     r"^https://ieeexplore\.ieee\.org/document/.*": IEEE,
-    r"^https://www\.usenix\.org/conference/.*": USENIX
+    r"^https://www\.usenix\.org/conference/.*": USENIX,
+    r"^https://lwn\.net/.*": LWN,
+    # r"^https://zhidao\.baidu\.com/.*": BaiduZhidao,
 }
 
 

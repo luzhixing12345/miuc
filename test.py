@@ -314,6 +314,11 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_lwn(self):
+        urls = ["https://lwn.net/Articles/682911/"]
+        for url in urls:
+            print(miuc.parse_url(url))
+
 
 if __name__ == "__main__":
     unittest.main()

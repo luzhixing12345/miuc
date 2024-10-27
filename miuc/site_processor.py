@@ -36,18 +36,24 @@ class Processor:
         self.urls_re = [
             # ...
         ]
+        
         self.headers = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+            "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
             "Accept-Encoding": "gzip",
             "Connection": "keep-alive",
             "Content-Type": "text/html;charset=utf-8",
+            "X-Requested-With": "fetch",
+            "Priority": "u=1, i",
+            "Accept": "*/*"
         }
 
         self.article_name = None
 
     def __call__(self, url: str):
         self._url: str = url
+        self.headers['Referer'] = self._url
         if len(self.urls_re) == 0:  # pragma: no cover
             self.error("finish urls_re in your processor class")
         for url_re in self.urls_re:
@@ -89,9 +95,10 @@ class Processor:
         """
         call this function if could not parse only by url
         """
-        response = requests.get(self._url, headers=self.headers, timeout=self.max_time_limit)
+        response = requests.get(self._url, headers=self.headers, timeout=self.max_time_limit, allow_redirects=True)
         if response.status_code != 200:
             self.error(f"connect {self._url} failed: status code [{response.status_code}]")  # pragma: no cover
+        
         return response.text
 
     def get_element_match(self, pattern: re.Pattern, flags=0) -> str:
@@ -241,7 +248,7 @@ class Githubio(Processor):
                 title = f"{self.repo_name} document"
             else:
                 title: str = self.routine
-                if title.endswith(".html"):
+                if title.endswith(".html"): # pragma: no cover
                     title = title[:-5]
         return title
 
@@ -421,7 +428,7 @@ class Zhihu(Processor):
             # https://www.zhihu.com/question/367357782/answer/3066947505 Anonymous user
             pattern = r'<h1 class="QuestionHeader-title">(.*?)</h1>'
             self.title = self.get_element_match(pattern) + "的回答"
-        elif self.type_name == "people":
+        elif self.type_name == "people": # pragma: no cover
             # https://www.zhihu.com/people/hinus
 
             pattern = r'<span class="ProfileHeader-name">(.*?)</span'
@@ -943,7 +950,7 @@ class Acm(Processor):
         self.urls_re = [r"^https://dl\.acm\.org/doi/.*"]
 
     def parse(self, res: Match) -> str:
-        pattern = r"<h1 class=\"citation__title\">(.*?)</h1>"
+        pattern = r"<h1.*>(.*?)</h1.*>"
         self.article_name = self.get_element_match(pattern).strip()
 
     def format(self) -> str:
@@ -983,7 +990,7 @@ class IEEE(Processor):
         self.urls_re = [r"^https://ieeexplore\.ieee\.org/document/.*"]
 
     def parse(self, res: Match) -> str:
-        pattern = r"<meta name=\"parsely-title\" content=\"(.*?)\ | IEEE Conference Publication | IEEE Xplore\" />"
+        pattern = r"<title>(.*) \| .* \| IEEE Xplore</title>"
         self.article_name = self.get_element_match(pattern).strip()
 
     def format(self) -> str:
@@ -1013,3 +1020,42 @@ class USENIX(Processor):
             title = self.article_name
 
         return title
+
+class LWN(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "lwn.net"
+
+        self.urls_re = [r"^https://lwn\.net/.*"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r"<h1>(.*?)</h1>"
+        self.article_name = self.get_element_match(pattern).strip()
+
+    def format(self) -> str:
+
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title
+    
+# class BaiduZhidao(Processor):
+#     def __init__(self, max_time_limit: int = 5) -> None:
+#         super().__init__(max_time_limit)
+#         self.site = "baidu zhidao"
+
+#         self.urls_re = [r"^https://zhidao\.baidu\.com/.*"]
+#         self.headers['Referer'] = self._url
+
+#     def parse(self, res: Match) -> str:
+#         pattern = r"<h1 class=\"question-title\">(.*?)</h1>"
+#         self.article_name = self.get_element_match(pattern).strip()
+
+#     def format(self) -> str:
+
+#         title = self.site
+#         if self.article_name:
+#             title = self.article_name
+
+#         return title
