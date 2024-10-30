@@ -47,6 +47,8 @@ SPECIFIC_SITES = {
     r"^https://www\.usenix\.org/conference/.*": USENIX,
     r"^https://lwn\.net/.*": LWN,
     # r"^https://zhidao\.baidu\.com/.*": BaiduZhidao,
+    r"^https://lkml\.org/lkml/*": Lkml,
+    r"^https://lore\.kernel\.org/*": LoreKernelOrg,
 }
 
 

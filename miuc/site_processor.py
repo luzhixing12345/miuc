@@ -1041,6 +1041,7 @@ class LWN(Processor):
         return title
     
 # class BaiduZhidao(Processor):
+#     # 加密的
 #     def __init__(self, max_time_limit: int = 5) -> None:
 #         super().__init__(max_time_limit)
 #         self.site = "baidu zhidao"
@@ -1059,3 +1060,41 @@ class LWN(Processor):
 #             title = self.article_name
 
 #         return title
+
+class Lkml(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "lklm.org"
+
+        self.urls_re = [r"^https://lkml\.org/.*"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r"<title>(.*?)</title>"
+        self.article_name = self.get_element_match(pattern).strip()
+        
+    def format(self) -> str:
+
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title
+    
+class LoreKernelOrg(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "lore.kernel.org"
+
+        self.urls_re = [r"^https://lore\.kernel\.org/.*"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r"<title>(.*?)</title>"
+        self.article_name = self.get_element_match(pattern).strip()
+        
+    def format(self) -> str:
+
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title

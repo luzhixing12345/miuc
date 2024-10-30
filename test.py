@@ -319,6 +319,25 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_lkml(self):
+        urls = [
+            "https://lkml.org/lkml/2018/9/25/5",
+            "https://lkml.org/lkml/2018/9/25/4",
+            "https://lkml.org/lkml/2018/9/25/3",
+            "https://lkml.org/lkml/2018/9/25/2",
+            "https://lkml.org/lkml/2018/9/25/1",
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
+
+    def test_lorekernel(self):
+        urls = [
+            "https://lore.kernel.org/linux-mm/64f1c69d-3706-41c5-a29f-929413e3dfa2@huawei.com/T/#m4c59b2ad0d5fd5b04b2768f931f27d6d194ef5bc",
+            "https://lore.kernel.org/linux-mm/20241029-v5_user_cfi_series-v7-6-2727ce9936cb@rivosinc.com/T/#u",
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
+
 
 if __name__ == "__main__":
     unittest.main()
