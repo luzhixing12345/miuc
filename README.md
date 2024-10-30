@@ -20,7 +20,14 @@ Vscode Extension miuc depends on python library [miuc](https://pypi.org/project/
 pip install miuc
 ```
 
-**Actually, miuc is not mature**, if you meet any bug please report @ [miuc issues](https://github.com/luzhixing12345/miuc/issues)
+> [!TIP]
+> miuc vscode extension only provides a simple wrapper for [miuc](https://pypi.org/project/miuc/)
+>
+> the core functionality of miuc will update silently in the background, you can find the latest version by
+> 
+> ```bash
+> pip install -U miuc
+> ```
 
 ## Usage
 
