@@ -1098,3 +1098,24 @@ class LoreKernelOrg(Processor):
             title = self.article_name
 
         return title
+    
+
+class UnixStackExchange(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        
+        self.site = "unix.stackexchange.com"
+        self.urls_re = [r"^https://unix\.stackexchange\.com/.*"]
+        
+    def parse(self, res: Match) -> str:
+        pattern = r"<meta name=\"twitter:title\" property=\"og:title\" itemprop=\"name\" content=\"(.*)\" />"
+        self.article_name = self.get_element_match(pattern).strip()
+        
+    def format(self) -> str:
+
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+
+        return title    
+    

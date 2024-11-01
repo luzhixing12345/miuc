@@ -12,7 +12,7 @@ from .web_parser import parse_url
 import io
 import sys
 
-VERSION = (0, 1, 17)
+VERSION = (0, 2, 7)
 
 def main():
 
