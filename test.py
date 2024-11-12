@@ -338,6 +338,13 @@ class MiucUnitTest(unittest.TestCase):
         for url in urls:
             print(miuc.parse_url(url))
 
+    def test_kernel_docs(self):
+        urls = [
+            "https://docs.kernel.org/mm/hmm.html",
+            "https://docs.kernel.org/mm/page_migration.html"
+        ]
+        for url in urls:
+            print(miuc.parse_url(url))
 
 if __name__ == "__main__":
     unittest.main()

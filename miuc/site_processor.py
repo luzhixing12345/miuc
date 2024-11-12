@@ -1119,3 +1119,21 @@ class UnixStackExchange(Processor):
 
         return title    
     
+class KernelOrg(Processor):
+    def __init__(self, max_time_limit: int = 5) -> None:
+        super().__init__(max_time_limit)
+        self.site = "kernel.org"
+        self.urls_re = [r"^https://docs\.kernel\.org/.*"]
+
+    def parse(self, res: Match) -> str:
+        pattern = r"<title>(.*?)</title>"
+        self.article_name = self.get_element_match(pattern).strip()
+        
+    def format(self) -> str:
+        
+        title = self.site
+        if self.article_name:
+            title = self.article_name
+            title = title.replace("  ", " ")
+
+        return title

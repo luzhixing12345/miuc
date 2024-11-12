@@ -50,6 +50,7 @@ SPECIFIC_SITES = {
     r"^https://lkml\.org/lkml/*": Lkml,
     r"^https://lore\.kernel\.org/*": LoreKernelOrg,
     r"^https://unix\.stackexchange\.com/questions/*": UnixStackExchange,
+    r"^https://docs\.kernel\.org/.*": KernelOrg,
 }
 
 
